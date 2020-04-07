@@ -198,3 +198,6 @@ FakesAssemblies/
 *.DS_Store
 .idea/
 launchSettings.json
+
+# Web App
+src/Jackett.Server/WebApp/wwwroot
