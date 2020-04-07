@@ -75,4 +75,11 @@
     </Content>
   </ItemGroup>
 
+  <!-- Copy WebApp resources -->
+  <ItemGroup>
+    <None Include="WebApp\wwwroot\**\*"
+          Link="Content\WebApp\%(RecursiveDir)%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest"/>
+  </ItemGroup>
+
 </Project>
