@@ -1,0 +1,22 @@
+@import '../../styles/shared.scss';
+
+.app-layout {
+  & > *:not(:first-child) {
+    margin-top: $header-nav-height;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .app-container {
+    margin-left: $sidebar-left-width;
+    //display: grid;
+    //grid: auto / auto;
+    justify-content: center;
+
+    padding: 20px 40px;
+
+    //width: 100%;
+  }
+}

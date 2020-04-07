@@ -200,4 +200,4 @@ FakesAssemblies/
 launchSettings.json
 
 # Web App
-src/Jackett.Server/WebApp/wwwroot
+src/Jackett.Server/WebApp/build
