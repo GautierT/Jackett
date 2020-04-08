@@ -1,23 +1,25 @@
 import React from 'react';
 import './AppLayout.scss';
 import HeaderNav from '../../containers/HeaderNav/HeaderNav';
-import {SideBar} from '../../containers/SideBar/SideBar';
-import ScrollToTop from '../ScrollToTop/ScrollToTop';
+import SideBar from '../../containers/SideBar/SideBar';
 
-export function AppLayout(props) {
-  return (
-    <ScrollToTop>
-      <link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/icon?family=Material+Icons"
-/>
+class AppLayout extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
       <div className='app-layout'>
-        <HeaderNav/>
-        <SideBar/>
+        <HeaderNav serverConfig={this.props.serverConfig}/>
+        <SideBar serverConfig={this.props.serverConfig}/>
         <div className='app-container' id='app-container'>
-          {props.children}
+          {this.props.children}
         </div>
       </div>
-    </ScrollToTop>
-  );
+    );
+  }
 }
+
+export default AppLayout;

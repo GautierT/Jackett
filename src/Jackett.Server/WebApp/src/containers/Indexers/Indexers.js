@@ -23,17 +23,14 @@ class Indexers extends React.Component {
     super(props);
 
     this.state = {
-      dataTable: [],
-      //apiIndexers: products
+      dataTable: []
     };
   }
 
   componentDidMount() {
-      const {products} = this.props;
-
       let results = [];
 
-      products.forEach(tracker => {
+      this.props.indexers.forEach(tracker => {
 
         if (!tracker.configured)
           return;
@@ -73,7 +70,6 @@ class Indexers extends React.Component {
       });
 
      this.setState({ dataTable: results });
-
   }
 
   render() {
@@ -115,10 +111,4 @@ class Indexers extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    products: getIndexers(state),
-  };
-}
-
-export default connect(mapStateToProps, null)(Indexers);
+export default Indexers;
