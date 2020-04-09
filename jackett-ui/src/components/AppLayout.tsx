@@ -12,13 +12,15 @@ import Home from "../pages/Home";
 
 const drawerWidth = 240;
 
+// TODO: remove unused styles
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             display: 'flex',
         },
         appBar: {
-            zIndex: theme.zIndex.drawer + 1,
+            width: `calc(100% - ${drawerWidth}px)`,
+            marginLeft: drawerWidth,
         },
         drawer: {
             width: drawerWidth,
@@ -27,11 +29,11 @@ const useStyles = makeStyles((theme: Theme) =>
         drawerPaper: {
             width: drawerWidth,
         },
-        drawerContainer: {
-            overflow: 'auto',
-        },
+        // necessary for content to be below app bar
+        toolbar: theme.mixins.toolbar,
         content: {
             flexGrow: 1,
+            backgroundColor: theme.palette.background.default,
             padding: theme.spacing(3),
         },
     }),
@@ -39,13 +41,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const theme = createMuiTheme({
     props: {
-        /*
         MuiListItem: {
             dense: true,
         },
         MuiToolbar: {
             variant: 'dense',
-        },*/
+        },
     },
     palette: {
         type: 'light', // dark

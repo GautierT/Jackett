@@ -1,0 +1,20 @@
+a {
+    text-decoration: none;
+}
+
+.logo {
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
+.logo span {
+    font-size: 30px;
+    font-weight: bold;
+    padding-left: 12px;
+    vertical-align: middle;
+}
+
+.logo img {
+    height: 40px;
+    vertical-align: middle;
+}
