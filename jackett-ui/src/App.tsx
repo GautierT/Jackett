@@ -1,33 +1,68 @@
 import React from 'react';
-import logo from './logo.svg';
+import AppLayout from "./components/AppLayout";
 import './App.css';
 
-import AppLayout from "./components/AppLayout";
+class App extends React.Component<any, any> {
 
-function App() {
+    constructor(props: any) {
+        super(props);
 
-    return (<AppLayout></AppLayout>);
+        this.state = {
+            serverConfig: null,
+            indexers: null,
+            isError: false,
+            errorMsg : "",
+        };
+    }
 
-    /*
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
+    componentWillMount() {
+        this.fetchServerConfig();
+        this.fetchIndexers();
+    }
 
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );*/
+    render() {
+        if (this.isLoading()) {
+            return (<h3>Loading ...</h3>);
+        }
+
+        return (
+            <AppLayout/>
+        );
+    }
+
+    isLoading() {
+        // error
+        if (this.state.isError)
+            return false;
+
+        // all data loaded correctly
+        if (this.state.serverConfig != null && this.state.indexers != null)
+            return false;
+
+        return true;
+    }
+
+    fetchServerConfig() {
+        fetch('/api/v2.0/server/config')
+            .then(res => res.json())
+            .then(res => {
+                this.setState({ serverConfig: res });
+            })
+            .catch(error => {
+                this.setState({ isError: true, errorMsg: "Error fetching server config API!" });
+            });
+    }
+
+    fetchIndexers() {
+        fetch('/api/v2.0/indexers')
+            .then(res => res.json())
+            .then(res => {
+                this.setState({ indexers: res });
+            })
+            .catch(error => {
+                this.setState({ isError: true, errorMsg: "Error fetching indexers API!" });
+            });
+    }
 }
 
 export default App;

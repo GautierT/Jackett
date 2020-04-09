@@ -9,6 +9,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import Sidebar from "./Sidebar";
 import Indexers from "../pages/Indexers";
 import Home from "../pages/Home";
+import Search from "../pages/Search";
 
 const drawerWidth = 240;
 
@@ -74,6 +75,7 @@ export default function AppLayout() {
                         <Switch>
                             {/*<Route path="/indexers" render={(props) => <Indexers {...props} indexers={this.state.indexers} />}/>*/}
                             <Route path="/indexers" component={Indexers}/>
+                            <Route path="/search" component={Search}/>
                             <Route path="/" component={Home}/>
                         </Switch>
                     </main>
