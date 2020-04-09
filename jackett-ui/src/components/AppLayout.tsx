@@ -40,10 +40,10 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const theme = createMuiTheme({
-    props: {
+    props: {/*
         MuiListItem: {
             dense: true,
-        },
+        },*/
         MuiToolbar: {
             variant: 'dense',
         },

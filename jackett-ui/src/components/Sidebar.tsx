@@ -1,12 +1,12 @@
 import React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import SideBarItem from "./SidebarItem";
-import "./Sidebar.css"
+import "./Sidebar.css";
+import logo from "../assets/jackett_logo.png";
 
 const drawerWidth = 240;
 
@@ -51,7 +51,7 @@ export default function Sidebar() {
         >
             <List>
                 <div className="logo">
-                    <img src="/jacket_medium.png"/>
+                    <img src={logo}/>
                     <span>Jackett</span>
                 </div>
             </List>
