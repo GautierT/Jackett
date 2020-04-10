@@ -1,68 +1,60 @@
 import React from 'react';
 import AppLayout from "./components/AppLayout";
 import './App.css';
+import {connect} from "react-redux";
+import {RootState} from "./store/reducers";
+import fetchServerConfig from "./store/thunks/serverConfig";
+import fetchIndexersConfig from "./store/thunks/indexersConfig";
+import {ServerConfigState} from "./store/types/serverConfig";
+import {IndexersConfigState} from "./store/types/indexersConfig";
 
-class App extends React.Component<any, any> {
+interface Props {
+    serverConfigState: ServerConfigState
+    indexersConfigState: IndexersConfigState
+    fetchServerConfig: () => void
+    fetchIndexersConfig: () => void
+}
 
-    constructor(props: any) {
-        super(props);
+function mapStateToProps(state: RootState) {
+    return {
+        serverConfigState: state.config,
+        indexersConfigState: state.indexers
+    };
+}
 
-        this.state = {
-            serverConfig: null,
-            indexers: null,
-            isError: false,
-            errorMsg : "",
-        };
-    }
+const mapDispatchToProps = {
+    fetchServerConfig: fetchServerConfig,
+    fetchIndexersConfig: fetchIndexersConfig
+}
+
+class App extends React.Component<Props, {}> {
 
     componentWillMount() {
-        this.fetchServerConfig();
-        this.fetchIndexers();
+        this.props.fetchServerConfig();
+        this.props.fetchIndexersConfig();
     }
 
     render() {
-        if (this.isLoading()) {
-            return (<h3>Loading ...</h3>);
+        // any error
+        if (this.props.serverConfigState.error || this.props.indexersConfigState.error) {
+            return (
+                <h3>Error loading!</h3>
+            );
         }
 
+        // all loaded
+        if (this.props.serverConfigState.isLoaded && this.props.indexersConfigState.isLoaded) {
+            return (
+                <AppLayout/>
+            );
+        }
+
+        // loading...
         return (
-            <AppLayout/>
+            <h3>Loading...</h3>
         );
     }
 
-    isLoading() {
-        // error
-        if (this.state.isError)
-            return false;
-
-        // all data loaded correctly
-        if (this.state.serverConfig != null && this.state.indexers != null)
-            return false;
-
-        return true;
-    }
-
-    fetchServerConfig() {
-        fetch('/api/v2.0/server/config')
-            .then(res => res.json())
-            .then(res => {
-                this.setState({ serverConfig: res });
-            })
-            .catch(error => {
-                this.setState({ isError: true, errorMsg: "Error fetching server config API!" });
-            });
-    }
-
-    fetchIndexers() {
-        fetch('/api/v2.0/indexers')
-            .then(res => res.json())
-            .then(res => {
-                this.setState({ indexers: res });
-            })
-            .catch(error => {
-                this.setState({ isError: true, errorMsg: "Error fetching indexers API!" });
-            });
-    }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);

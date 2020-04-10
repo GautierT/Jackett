@@ -2,6 +2,7 @@ import React from 'react';
 import MaterialTable from "material-table";
 //import filesize from "filesize";
 
+// TODO: add props & state
 class Search extends React.Component<any, any> {
 
     constructor(props: any) {
