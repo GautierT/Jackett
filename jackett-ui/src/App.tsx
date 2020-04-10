@@ -7,6 +7,8 @@ import fetchServerConfig from "./store/thunks/serverConfig";
 import fetchIndexersConfig from "./store/thunks/indexersConfig";
 import {ServerConfigState} from "./store/types/serverConfig";
 import {IndexersConfigState} from "./store/types/indexersConfig";
+import {CircularProgress} from "@material-ui/core";
+import Box from "@material-ui/core/Box";
 
 interface Props {
     serverConfigState: ServerConfigState
@@ -51,7 +53,11 @@ class App extends React.Component<Props, {}> {
 
         // loading...
         return (
-            <h3>Loading...</h3>
+            <Box display="flex" width={"100%"} style={{ minHeight: '100vh' }}>
+                <Box m="auto">
+                    <CircularProgress size={80}/>
+                </Box>
+            </Box>
         );
     }
 

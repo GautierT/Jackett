@@ -1,9 +1,29 @@
 import React from 'react';
 import MaterialTable from "material-table";
+import {connect} from "react-redux";
+import {IndexerConfig, IndexersConfig} from "../store/types/indexersConfig";
+import {RootState} from "../store/reducers";
 //import filesize from "filesize";
 
 // TODO: add props & state
-class Search extends React.Component<any, any> {
+interface State {
+    dataTable: Array<IndexerConfig>
+}
+
+interface Props {
+    apiKey: string
+}
+
+function mapStateToProps(state: RootState) {
+    return {
+        apiKey: state.config.config.api_key
+    };
+}
+
+const mapDispatchToProps = {
+}
+
+class Search extends React.Component<Props, State> {
 
     constructor(props: any) {
         super(props);
@@ -14,7 +34,7 @@ class Search extends React.Component<any, any> {
 
     componentDidMount() {
 
-        fetch('/api/v2.0/indexers/all/results?apikey=bszqtu44xg5j5ukfptaafrf57rknv9ud&Query=&Tracker%5B%5D=1337x')
+        fetch(`/api/v2.0/indexers/all/results?apikey=${this.props.apiKey}&Query=&Tracker%5B%5D=1337x`)
             .then(res => res.json())
             .then((data) => {
                 this.setState({ dataTable: data.Results })
@@ -129,4 +149,4 @@ class Search extends React.Component<any, any> {
     }*/
 }
 
-export default Search;
+export default connect(mapStateToProps, mapDispatchToProps)(Search);

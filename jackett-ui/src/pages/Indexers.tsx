@@ -21,7 +21,7 @@ function mapStateToProps(state: RootState) {
 const mapDispatchToProps = {
 }
 
-export class Indexers extends React.Component<Props, State> {
+class Indexers extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);

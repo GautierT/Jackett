@@ -10,6 +10,7 @@ import Sidebar from "./Sidebar";
 import Indexers from "../pages/Indexers";
 import Home from "../pages/Home";
 import Search from "../pages/Search";
+import Configuration from "../pages/Configuration";
 
 const drawerWidth = 240;
 
@@ -76,6 +77,7 @@ export default function AppLayout() {
                             {/*<Route path="/indexers" render={(props) => <Indexers {...props} indexers={this.state.indexers} />}/>*/}
                             <Route path="/indexers" component={Indexers}/>
                             <Route path="/search" component={Search}/>
+                            <Route path="/configuration" component={Configuration}/>
                             <Route path="/" component={Home}/>
                         </Switch>
                     </main>
