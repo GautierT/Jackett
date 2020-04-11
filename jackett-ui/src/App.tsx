@@ -1,15 +1,15 @@
 import React from 'react';
-import AppLayout from "./components/AppLayout";
-import './App.css';
 import {connect} from "react-redux";
 import {RootState} from "./store/reducers";
 import {fetchServerConfig} from "./store/thunks/serverConfig";
 import {fetchIndexersConfig} from "./store/thunks/indexersConfig";
 import {ServerConfigState} from "./store/types/serverConfig";
 import {IndexersConfigState} from "./store/types/indexersConfig";
-import Box from "@material-ui/core/Box";
-import {Col, Row, Spin} from "antd";
+import AppLayout from "./components/AppLayout";
+
+import {Spin} from "antd";
 import 'antd/dist/antd.css';
+import './App.css';
 
 interface Props {
     serverConfigState: ServerConfigState

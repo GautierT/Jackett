@@ -2,7 +2,6 @@ import * as React from "react";
 import {connect} from "react-redux";
 import {RootState} from "../store/reducers";
 import {IndexerConfig, IndexersConfig} from "../store/types/indexersConfig";
-import MaterialTable from "material-table";
 import {Card, Table} from "antd";
 
 interface State {

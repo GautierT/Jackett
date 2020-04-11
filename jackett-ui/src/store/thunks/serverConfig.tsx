@@ -6,7 +6,6 @@ import {
     updateConfigPending,
     updateConfigSuccess
 } from "../actions/serverConfig";
-import ts from "typescript/lib/tsserverlibrary";
 import {ServerConfig} from "../types/serverConfig";
 
 //

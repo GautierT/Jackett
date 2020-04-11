@@ -1,14 +1,10 @@
 import React from 'react';
-import MaterialTable from "material-table";
 import {connect} from "react-redux";
-import {IndexerConfig, IndexersConfig} from "../store/types/indexersConfig";
 import {RootState} from "../store/reducers";
-import {Card, Select, Table} from "antd";
-//import filesize from "filesize";
-import { Form, Input, Button, Radio } from 'antd';
+import {IndexerConfig, IndexersConfig} from "../store/types/indexersConfig";
+import {Card, Select, Table, Form, Input, Button } from 'antd';
 import {Store} from 'rc-field-form/lib/interface.d'
-
-const { Option } = Select;
+//import filesize from "filesize";
 
 // TODO: add props & state
 interface State {
@@ -167,7 +163,7 @@ class Search extends React.Component<Props, State> {
 
         // TODO: dont keep state, check indexer addition
         const children = this.props.indexers.filter(indexer => indexer.configured).map(indexer => {
-            return (<Option key={indexer.id} value={indexer.id}>{indexer.name}</Option>)
+            return (<Select.Option key={indexer.id} value={indexer.id}>{indexer.name}</Select.Option>)
         })
 
 

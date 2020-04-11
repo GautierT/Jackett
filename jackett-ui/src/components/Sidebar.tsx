@@ -1,25 +1,17 @@
 import React from 'react';
+import {connect} from "react-redux";
+import {Link} from "react-router-dom";
+import {RootState} from "../store/reducers";
+import {ServerConfig} from "../store/types/serverConfig";
 
-
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Layout, Menu } from 'antd';
 import {
     DesktopOutlined,
-    PieChartOutlined,
-    FileOutlined,
-    TeamOutlined,
     UserOutlined,
 } from '@ant-design/icons';
 
 import logo from "../assets/jackett_logo.png";
 import "./Sidebar.css";
-import {Link} from "react-router-dom";
-import {connect} from "react-redux";
-import {RootState} from "../store/reducers";
-import {ServerConfig} from "../store/types/serverConfig";
-import {updateServerConfig} from "../store/thunks/serverConfig";
-
-const { Header, Content, Footer, Sider } = Layout;
-const { SubMenu } = Menu;
 
 interface Props {
     config: ServerConfig
@@ -46,13 +38,13 @@ class Sidebar extends React.Component<Props, {}> {
 
     render() {
         return (
-            <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse} width={230}>
+            <Layout.Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse} width={230}>
                 <div className="jackett-logo">
                     <img src={logo}/>
                     <span>Jackett</span>
                 </div>
                 <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-                    <SubMenu
+                    <Menu.SubMenu
                         key="sub1"
                         title={
                             <span>
@@ -71,8 +63,8 @@ class Sidebar extends React.Component<Props, {}> {
                             <span>Add Indexer</span>
                             <Link to="/addindexer" />
                         </Menu.Item>
-                    </SubMenu>
-                    <SubMenu
+                    </Menu.SubMenu>
+                    <Menu.SubMenu
                         key="sub2"
                         title={
                             <span>
@@ -91,8 +83,8 @@ class Sidebar extends React.Component<Props, {}> {
                             <span>Search cache</span>
                             <Link to="/cache" />
                         </Menu.Item>
-                    </SubMenu>
-                    <SubMenu
+                    </Menu.SubMenu>
+                    <Menu.SubMenu
                         key="sub3"
                         title={
                             <span>
@@ -111,8 +103,8 @@ class Sidebar extends React.Component<Props, {}> {
                             <span>Security</span>
                             <Link to="/security" />
                         </Menu.Item>
-                    </SubMenu>
-                    <SubMenu
+                    </Menu.SubMenu>
+                    <Menu.SubMenu
                         key="sub4"
                         title={
                             <span>
@@ -136,14 +128,16 @@ class Sidebar extends React.Component<Props, {}> {
                             <span>Logs</span>
                             <Link to="/logs" />
                         </Menu.Item>
-                    </SubMenu>
+                    </Menu.SubMenu>
                     <li>
                         <div className="jackett-version">
-                            <a href="https://github.com/Jackett/Jackett" target="_blank">Version {this.props.config.app_version}</a>
+                            <a href="https://github.com/Jackett/Jackett" target="_blank" rel="noopener noreferrer">
+                                Version {this.props.config.app_version}
+                            </a>
                         </div>
                     </li>
                 </Menu>
-            </Sider>
+            </Layout.Sider>
 
         );
     }

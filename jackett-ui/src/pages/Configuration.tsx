@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {connect} from "react-redux";
 import {RootState} from "../store/reducers";
 import {ServerConfig} from "../store/types/serverConfig";
@@ -8,13 +8,12 @@ import {
     Form,
     Input,
     Button,
-    Radio,
     Select,
     Cascader,
     DatePicker,
     InputNumber,
     TreeSelect,
-    Switch, PageHeader,
+    Switch, PageHeader, Card,
 } from 'antd';
 import { Row, Col } from 'antd';
 import {updateServerConfig} from "../store/thunks/serverConfig";
@@ -58,13 +57,7 @@ class Configuration extends React.Component<Props, State> {
     render() {
 
         return (
-            <div>
-            <PageHeader
-                className="site-page-header"
-                onBack={() => null}
-                title="Configuration"
-                subTitle="This is a subtitle"
-            />,
+            <Card title="General configuration" style={{ width: "100%" }}>
             <Row>
                 <Col span={12}>
                 <Form
@@ -75,7 +68,6 @@ class Configuration extends React.Component<Props, State> {
                         proxyPort: this.props.config.proxy_port
                     }}
                     onFinish={this.handleSubmit}
-                    size="small"
                 >
                     <Form.Item label="Proxy port" name="proxyPort">
                         <InputNumber/>
@@ -117,15 +109,15 @@ class Configuration extends React.Component<Props, State> {
                     <Form.Item label="Switch">
                         <Switch />
                     </Form.Item>
-                    <Form.Item label="Button">
+                    <Form.Item label="">
                         <Button type="primary" htmlType="submit">
-                            Submit
+                            Save
                         </Button>
                     </Form.Item>
                 </Form>
                 </Col>
             </Row>
-            </div>
+            </Card>
         )
     }
 }
