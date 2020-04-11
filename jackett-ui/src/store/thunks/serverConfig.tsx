@@ -1,10 +1,18 @@
 import {Dispatch} from "redux";
-import {fetchConfigError, fetchConfigPending, fetchConfigSuccess} from "../actions/serverConfig";
+import {
+    fetchConfigError,
+    fetchConfigPending,
+    fetchConfigSuccess, updateConfigError,
+    updateConfigPending,
+    updateConfigSuccess
+} from "../actions/serverConfig";
+import ts from "typescript/lib/tsserverlibrary";
+import {ServerConfig} from "../types/serverConfig";
 
 //
 // Thunks
 
-function fetchServerConfig() {
+export function fetchServerConfig() {
     return (dispatch: Dispatch) => {
         dispatch(fetchConfigPending());
         fetch('/api/v2.0/server/config')
@@ -18,4 +26,24 @@ function fetchServerConfig() {
     }
 }
 
-export default fetchServerConfig;
+export function updateServerConfig(data: ServerConfig) {
+    return (dispatch: Dispatch) => {
+        dispatch(updateConfigPending());
+        fetch('/api/v2.0/server/config', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers:{
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                // TODO: the response format is different
+                dispatch(updateConfigSuccess(data));
+            })
+            .catch(error => {
+                dispatch(updateConfigError("Error updating config!"));
+            })
+    }
+}
+

@@ -1,31 +1,30 @@
-import * as React from "react";
+import React, { useState } from 'react';
 import {connect} from "react-redux";
 import {RootState} from "../store/reducers";
 import {ServerConfig} from "../store/types/serverConfig";
-import {TextField} from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Paper from "@material-ui/core/Paper";
-import {Theme} from "@material-ui/core/styles";
-import withStyles from "@material-ui/core/styles/withStyles";
-import {ClassNameMap} from "@material-ui/styles/withStyles";
-import withTheme from "@material-ui/core/styles/withTheme";
+import {Store} from 'rc-field-form/lib/interface.d'
 
-// TODO: remove unused styles
-const useStyles = (theme: Theme) => ({
-    paper: {
-        padding: theme.spacing(2)
-    }
-});
+import {
+    Form,
+    Input,
+    Button,
+    Radio,
+    Select,
+    Cascader,
+    DatePicker,
+    InputNumber,
+    TreeSelect,
+    Switch, PageHeader,
+} from 'antd';
+import { Row, Col } from 'antd';
+import {updateServerConfig} from "../store/thunks/serverConfig";
 
-interface State {
+interface State extends ServerConfig {
 }
 
 interface Props {
     config: ServerConfig
-    classes: ClassNameMap
+    updateServerConfig: (config: ServerConfig) => void
 }
 
 function mapStateToProps(state: RootState) {
@@ -35,55 +34,100 @@ function mapStateToProps(state: RootState) {
 }
 
 const mapDispatchToProps = {
+    updateServerConfig: (config: ServerConfig) => updateServerConfig(config)
 }
 
 class Configuration extends React.Component<Props, State> {
+
+    constructor (props: Props) {
+        super(props);
+        this.state = this.props.config;
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(values: Store) {
+        const config = JSON.parse(JSON.stringify(this.props.config));
+        config.proxy_port = values.proxyPort;
+        this.props.updateServerConfig(config)
+    }
 
     componentDidMount() {
 
     }
 
     render() {
-        const { classes } = this.props;
 
         return (
-            <Paper className={classes.paper}>
-                <Typography variant="h6" gutterBottom>
-                    Payment method
-                </Typography>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                        <TextField required id="adminPassword" label="Admin password" />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField required id="basePathOverride" label="Base Path Override" fullWidth />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField required id="expDate" label="Server Port" fullWidth />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField
-                            required
-                            id="cvv"
-                            label="CVV"
-                            helperText="Last three digits on signature strip"
-                            fullWidth
+            <div>
+            <PageHeader
+                className="site-page-header"
+                onBack={() => null}
+                title="Configuration"
+                subTitle="This is a subtitle"
+            />,
+            <Row>
+                <Col span={12}>
+                <Form
+                    labelCol={{ span: 4 }}
+                    wrapperCol={{ span: 14 }}
+                    layout="horizontal"
+                    initialValues={{
+                        proxyPort: this.props.config.proxy_port
+                    }}
+                    onFinish={this.handleSubmit}
+                    size="small"
+                >
+                    <Form.Item label="Proxy port" name="proxyPort">
+                        <InputNumber/>
+                    </Form.Item>
+                    <Form.Item label="Input" name="input">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="Select">
+                        <Select>
+                            <Select.Option value="demo">Demo</Select.Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label="TreeSelect">
+                        <TreeSelect
+                            treeData={[
+                                { title: 'Light', value: 'light', children: [{ title: 'Bamboo', value: 'bamboo' }] },
+                            ]}
                         />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <FormControlLabel
-                            control={<Checkbox color="secondary" name="saveCard" value="yes" />}
-                            label="Remember credit card details for next time"
+                    </Form.Item>
+                    <Form.Item label="Cascader">
+                        <Cascader
+                            options={[
+                                {
+                                    value: 'zhejiang',
+                                    label: 'Zhejiang',
+                                    children: [
+                                        {
+                                            value: 'hangzhou',
+                                            label: 'Hangzhou',
+                                        },
+                                    ],
+                                },
+                            ]}
                         />
-                    </Grid>
-                </Grid>
-            </Paper>
+                    </Form.Item>
+                    <Form.Item label="DatePicker">
+                        <DatePicker />
+                    </Form.Item>
+                    <Form.Item label="Switch">
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label="Button">
+                        <Button type="primary" htmlType="submit">
+                            Submit
+                        </Button>
+                    </Form.Item>
+                </Form>
+                </Col>
+            </Row>
+            </div>
         )
     }
 }
 
-export default withTheme(withStyles(useStyles)(connect(mapStateToProps, mapDispatchToProps)(Configuration)));
+export default connect(mapStateToProps, mapDispatchToProps)(Configuration);

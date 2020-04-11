@@ -4,7 +4,7 @@ import {fetchIndexersError, fetchIndexersPending, fetchIndexersSuccess} from "..
 //
 // Thunks
 
-function fetchIndexersConfig() {
+export function fetchIndexersConfig() {
     return (dispatch: Dispatch) => {
         dispatch(fetchIndexersPending());
         fetch('/api/v2.0/indexers')
@@ -17,5 +17,3 @@ function fetchIndexersConfig() {
             })
     }
 }
-
-export default fetchIndexersConfig;

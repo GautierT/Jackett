@@ -1,20 +1,38 @@
-a {
-    text-decoration: none;
+
+
+.jackett-logo {
+    padding-left: 24px;
+    padding-top: 5px;
+    color: white;
+    height: 60px;
 }
 
-.logo {
-    padding-left: 18px;
-    padding-right: 18px;
-}
-
-.logo span {
+.jackett-logo span {
     font-size: 30px;
     //font-weight: bold;
     padding-left: 12px;
     vertical-align: middle;
 }
 
-.logo img {
+.jackett-logo img {
     height: 40px;
     vertical-align: middle;
+    filter: invert(100%);
+}
+
+.jackett-version {
+    padding-top: 10px;
+    height: 40px;
+    width: 100%;
+    text-align: center;
+    line-height: 40px;
+    display: block;
+}
+
+.jackett-version a {
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.site-layout .site-layout-background {
+    background: #fff;
 }

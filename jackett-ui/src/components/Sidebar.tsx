@@ -1,46 +1,160 @@
 import React from 'react';
-import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import SideBarItem from "./SidebarItem";
-import "./Sidebar.css";
+
+
+import { Layout, Menu, Breadcrumb } from 'antd';
+import {
+    DesktopOutlined,
+    PieChartOutlined,
+    FileOutlined,
+    TeamOutlined,
+    UserOutlined,
+} from '@ant-design/icons';
+
 import logo from "../assets/jackett_logo.png";
+import "./Sidebar.css";
+import {Link} from "react-router-dom";
+import {connect} from "react-redux";
+import {RootState} from "../store/reducers";
+import {ServerConfig} from "../store/types/serverConfig";
+import {updateServerConfig} from "../store/thunks/serverConfig";
 
-const drawerWidth = 240;
+const { Header, Content, Footer, Sider } = Layout;
+const { SubMenu } = Menu;
 
-// TODO: remove unused styles
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            display: 'flex',
-        },
-        appBar: {
-            width: `calc(100% - ${drawerWidth}px)`,
-            marginLeft: drawerWidth,
-        },
-        drawer: {
-            width: drawerWidth,
-            flexShrink: 0,
-        },
-        drawerPaper: {
-            width: drawerWidth,
-        },
-        // necessary for content to be below app bar
-        toolbar: theme.mixins.toolbar,
-        content: {
-            flexGrow: 1,
-            backgroundColor: theme.palette.background.default,
-            padding: theme.spacing(3),
-        },
-    }),
-);
+interface Props {
+    config: ServerConfig
+}
 
-export default function Sidebar() {
-    const classes = useStyles();
+function mapStateToProps(state: RootState) {
+    return {
+        config: state.config.config
+    };
+}
 
-    return (
+const mapDispatchToProps = {
+}
+
+class Sidebar extends React.Component<Props, {}> {
+    state = {
+        collapsed: false,
+    };
+
+    onCollapse = (collapsed: boolean) => {
+        console.log(collapsed);
+        this.setState({ collapsed });
+    };
+
+    render() {
+        return (
+            <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse} width={230}>
+                <div className="jackett-logo">
+                    <img src={logo}/>
+                    <span>Jackett</span>
+                </div>
+                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+                    <SubMenu
+                        key="sub1"
+                        title={
+                            <span>
+                              <UserOutlined/>
+                              <span>Indexers</span>
+                            </span>
+                        }
+                    >
+                        <Menu.Item key="1">
+                            <DesktopOutlined/>
+                            <span>Indexers</span>
+                            <Link to="/" />
+                        </Menu.Item>
+                        <Menu.Item key="2">
+                            <DesktopOutlined/>
+                            <span>Add Indexer</span>
+                            <Link to="/addindexer" />
+                        </Menu.Item>
+                    </SubMenu>
+                    <SubMenu
+                        key="sub2"
+                        title={
+                            <span>
+                              <UserOutlined/>
+                              <span>Search</span>
+                            </span>
+                        }
+                    >
+                        <Menu.Item key="3">
+                            <DesktopOutlined/>
+                            <span>Search</span>
+                            <Link to="/search" />
+                        </Menu.Item>
+                        <Menu.Item key="4">
+                            <DesktopOutlined/>
+                            <span>Search cache</span>
+                            <Link to="/cache" />
+                        </Menu.Item>
+                    </SubMenu>
+                    <SubMenu
+                        key="sub3"
+                        title={
+                            <span>
+                              <UserOutlined/>
+                              <span>Settings</span>
+                            </span>
+                        }
+                    >
+                        <Menu.Item key="5">
+                            <DesktopOutlined/>
+                            <span>General</span>
+                            <Link to="/configuration" />
+                        </Menu.Item>
+                        <Menu.Item key="6">
+                            <DesktopOutlined/>
+                            <span>Security</span>
+                            <Link to="/security" />
+                        </Menu.Item>
+                    </SubMenu>
+                    <SubMenu
+                        key="sub4"
+                        title={
+                            <span>
+                              <UserOutlined/>
+                              <span>System</span>
+                            </span>
+                        }
+                    >
+                        <Menu.Item key="7">
+                            <DesktopOutlined/>
+                            <span>Status</span>
+                            <Link to="/status" />
+                        </Menu.Item>
+                        <Menu.Item key="8">
+                            <DesktopOutlined/>
+                            <span>Updates</span>
+                            <Link to="/updates" />
+                        </Menu.Item>
+                        <Menu.Item key="9">
+                            <DesktopOutlined/>
+                            <span>Logs</span>
+                            <Link to="/logs" />
+                        </Menu.Item>
+                    </SubMenu>
+                    <li>
+                        <div className="jackett-version">
+                            <a href="https://github.com/Jackett/Jackett" target="_blank">Version {this.props.config.app_version}</a>
+                        </div>
+                    </li>
+                </Menu>
+            </Sider>
+
+        );
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);
+
+
+/*
+
+
         <Drawer
             className={classes.drawer}
             variant="permanent"
@@ -72,5 +186,4 @@ export default function Sidebar() {
             </List>
             <Divider/>
         </Drawer>
-    );
-}
+ */

@@ -3,6 +3,7 @@ import {connect} from "react-redux";
 import {RootState} from "../store/reducers";
 import {IndexerConfig, IndexersConfig} from "../store/types/indexersConfig";
 import MaterialTable from "material-table";
+import {Card, Table} from "antd";
 
 interface State {
     dataTable: Array<IndexerConfig>
@@ -87,14 +88,15 @@ class Indexers extends React.Component<Props, State> {
         const columns = [
             {
                 title: 'Indexer',
-                field: 'name',
-                searchable: true,
-                width: '20%',
+                dataIndex: 'id',
+                key: 'id',
+                sorter: (a:any, b:any) => a.id.localeCompare(b.id)
                 //render: rowData => rowData.indexerRender
             },
             {
                 title: 'Actions',
-                field: 'name',
+                dataIndex: 'name',
+                key: 'name',
                 searchable: false,
                 sorting: false,
                 width: '80%',
@@ -103,19 +105,9 @@ class Indexers extends React.Component<Props, State> {
         ];
 
         return (
-            <MaterialTable
-                title="Indexers"
-                //size="small" aria-label="a dense table"
-                //tableLayout = "fixed"
-                columns={columns}
-                data={ this.state.dataTable }
-                options={{
-                    sorting: true,
-                    pageSize: 15,
-                    headerStyle:{ padding: '5px 30px' },
-                    //cellStyle:{ padding: '5px 30px' },
-                }}
-            />
+            <Card title="Configured indexers" extra={<a href="#">More</a>} style={{ width: "100%" }}>
+                <Table dataSource={this.state.dataTable} columns={columns} size="small" pagination={{position:["bottomLeft"]}}/>
+            </Card>
         );
     }
 }

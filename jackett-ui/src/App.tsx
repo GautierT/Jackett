@@ -3,12 +3,13 @@ import AppLayout from "./components/AppLayout";
 import './App.css';
 import {connect} from "react-redux";
 import {RootState} from "./store/reducers";
-import fetchServerConfig from "./store/thunks/serverConfig";
-import fetchIndexersConfig from "./store/thunks/indexersConfig";
+import {fetchServerConfig} from "./store/thunks/serverConfig";
+import {fetchIndexersConfig} from "./store/thunks/indexersConfig";
 import {ServerConfigState} from "./store/types/serverConfig";
 import {IndexersConfigState} from "./store/types/indexersConfig";
-import {CircularProgress} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
+import {Col, Row, Spin} from "antd";
+import 'antd/dist/antd.css';
 
 interface Props {
     serverConfigState: ServerConfigState
@@ -31,7 +32,7 @@ const mapDispatchToProps = {
 
 class App extends React.Component<Props, {}> {
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.fetchServerConfig();
         this.props.fetchIndexersConfig();
     }
@@ -53,11 +54,10 @@ class App extends React.Component<Props, {}> {
 
         // loading...
         return (
-            <Box display="flex" width={"100%"} style={{ minHeight: '100vh' }}>
-                <Box m="auto">
-                    <CircularProgress size={80}/>
-                </Box>
-            </Box>
+            <div className="loading">
+                <Spin size="large"/>
+            </div>
+
         );
     }
 

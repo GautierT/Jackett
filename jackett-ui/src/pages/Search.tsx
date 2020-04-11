@@ -3,7 +3,12 @@ import MaterialTable from "material-table";
 import {connect} from "react-redux";
 import {IndexerConfig, IndexersConfig} from "../store/types/indexersConfig";
 import {RootState} from "../store/reducers";
+import {Card, Select, Table} from "antd";
 //import filesize from "filesize";
+import { Form, Input, Button, Radio } from 'antd';
+import {Store} from 'rc-field-form/lib/interface.d'
+
+const { Option } = Select;
 
 // TODO: add props & state
 interface State {
@@ -12,11 +17,13 @@ interface State {
 
 interface Props {
     apiKey: string
+    indexers: IndexersConfig
 }
 
 function mapStateToProps(state: RootState) {
     return {
-        apiKey: state.config.config.api_key
+        apiKey: state.config.config.api_key,
+        indexers: state.indexers.indexers
     };
 }
 
@@ -30,11 +37,45 @@ class Search extends React.Component<Props, State> {
         this.state = {
             dataTable: []
         };
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
 
+
+        /*
         fetch(`/api/v2.0/indexers/all/results?apikey=${this.props.apiKey}&Query=&Tracker%5B%5D=1337x`)
+            .then(res => res.json())
+            .then((data) => {
+                this.setState({ dataTable: data.Results })
+            })
+            .catch(console.error)
+*/
+    }
+
+    // TODO: move to utils
+    encodeQueryData(data: Array<Array<string>>) {
+        let ret: Array<string> = [];
+        data.forEach((d: Array<string>) => {
+            ret.push(encodeURIComponent(d[0]) + '=' + encodeURIComponent(d[1]));
+        });
+        return ret.join('&');
+    }
+
+    handleSubmit(values: Store) {
+        let qc: Array<Array<string>> = [];
+        qc.push(["apikey", this.props.apiKey]);
+
+        let searchTerm = values.query ? values.query : "";
+        qc.push(["Query", searchTerm]);
+
+        if (values.trackers) {
+            values.trackers.forEach((tracker: string) => {
+                qc.push(["Tracker[]", tracker]);
+            })
+        }
+
+        fetch("/api/v2.0/indexers/all/results?" + this.encodeQueryData(qc))
             .then(res => res.json())
             .then((data) => {
                 this.setState({ dataTable: data.Results })
@@ -47,94 +88,126 @@ class Search extends React.Component<Props, State> {
         const columns = [
             {
                 title: 'Published',
-                field: 'PublishDate',
+                dataIndex: 'PublishDate',
                 searchable: false,
                 width: '1px',
+                sorter: (a:any, b:any) => a.PublishDate.localeCompare(b.PublishDate)
             },
             {
                 title: 'Tracker',
-                field: 'Tracker',
+                dataIndex: 'Tracker',
                 searchable: false,
                 width: '1px',
+                sorter: (a:any, b:any) => a.Tracker.localeCompare(b.Tracker)
             },
             {
                 title: 'Name',
-                field: 'Title',
+                dataIndex: 'Title',
                 width: '100%',
+                sorter: (a:any, b:any) => a.Title.localeCompare(b.Title)
                 // render: rowData => <a href={rowData.Comments} target="_blank">{ rowData.Title }</a>
             },
             {
                 title: 'Size',
-                field: 'Size',
+                dataIndex: 'Size',
                 searchable: false,
                 width: '1px',
                 // render: rowData => <span style={{ whiteSpace: "nowrap" }}>{ filesize(rowData.Size) }</span>
             },
             {
                 title: 'Files',
-                field: 'Files',
+                dataIndex: 'Files',
                 searchable: false,
                 width: '1px',
             },
             {
                 title: 'Category',
-                field: 'CategoryDesc',
+                dataIndex: 'CategoryDesc',
                 searchable: false,
                 width: '1px',
             },
             {
                 title: 'Grabs',
-                field: 'Grabs',
+                dataIndex: 'Grabs',
                 searchable: false,
                 width: '1px',
             },
             {
                 title: 'Seeds',
-                field: 'Seeders',
+                dataIndex: 'Seeders',
                 searchable: false,
                 width: '1px',
             },
             {
                 title: 'Leechers',
-                field: 'Peers',
+                dataIndex: 'Peers',
                 searchable: false,
                 width: '1px',
             },
             {
                 title: 'DF',
-                field: 'DownloadVolumeFactor',
+                dataIndex: 'DownloadVolumeFactor',
                 searchable: false,
                 width: '1px',
             },
             {
                 title: 'UF',
-                field: 'UploadVolumeFactor',
+                dataIndex: 'UploadVolumeFactor',
                 searchable: false,
                 width: '1px',
             },
             {
                 title: 'DL',
-                field: 'UploadVolumeFactor',
+                dataIndex: 'UploadVolumeFactor',
                 searchable: false,
                 width: '1px',
                 //render: rowData => this.downloadLinks(rowData)
             }
         ];
 
+        // TODO: dont keep state, check indexer addition
+        const children = this.props.indexers.filter(indexer => indexer.configured).map(indexer => {
+            return (<Option key={indexer.id} value={indexer.id}>{indexer.name}</Option>)
+        })
+
+
+
         return (
-            <MaterialTable
-                title="Search"
-                //size="small" aria-label="a dense table"
-                //tableLayout = "fixed"
-                columns={columns}
-                data={ this.state.dataTable }
-                options={{
-                    sorting: true,
-                    pageSize:20,
-                    headerStyle:{ padding: '5px' },
-                    //cellStyle:{ padding: '5px' },
-                }}
-            />
+            <Card title="Search" extra={<a href="#">More</a>} style={{ width: "100%" }}>
+                <div>
+                    <Form
+                        layout="inline"
+                        style={{marginBottom: "16px"}}
+                        onFinish={this.handleSubmit}
+                    >
+                        <Form.Item label="Query" name="query">
+                            <Input placeholder="search term" style={{ width: '350px' }}/>
+                        </Form.Item>
+                        <Form.Item label="Trackers" name="trackers">
+                            <Select
+                                mode="multiple"
+                                style={{ width: '350px' }}
+                                placeholder="all trackers"
+                            >
+                                {children}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item label="Categories" name="categories">
+                            <Select
+                                mode="multiple"
+                                style={{ width: '350px' }}
+                                placeholder="all categories"
+                            >
+                                {children}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item >
+                            <Button type="primary" htmlType="submit">Search</Button>
+                        </Form.Item>
+                    </Form>
+                </div>
+                <Table dataSource={this.state.dataTable} columns={columns} size="small" pagination={{position:["bottomLeft"]}}/>
+            </Card>
         );
     }
 /*
