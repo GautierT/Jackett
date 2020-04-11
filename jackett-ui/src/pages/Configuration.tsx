@@ -1,22 +1,11 @@
 import React from 'react';
 import {connect} from "react-redux";
+import {Store} from 'rc-field-form/lib/interface.d'
+import {Button, Card, Cascader, Col, DatePicker, Form, Input, InputNumber, Row, Select, Switch, TreeSelect} from 'antd';
+
+import {updateServerConfig} from "../store/thunks/serverConfig";
 import {RootState} from "../store/reducers";
 import {ServerConfig} from "../store/types/serverConfig";
-import {Store} from 'rc-field-form/lib/interface.d'
-
-import {
-    Form,
-    Input,
-    Button,
-    Select,
-    Cascader,
-    DatePicker,
-    InputNumber,
-    TreeSelect,
-    Switch, PageHeader, Card,
-} from 'antd';
-import { Row, Col } from 'antd';
-import {updateServerConfig} from "../store/thunks/serverConfig";
 
 interface State extends ServerConfig {
 }

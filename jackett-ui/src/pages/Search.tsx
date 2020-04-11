@@ -4,7 +4,7 @@ import {RootState} from "../store/reducers";
 import {IndexerConfig, IndexersConfig} from "../store/types/indexersConfig";
 import {Card, Select, Table, Form, Input, Button } from 'antd';
 import {Store} from 'rc-field-form/lib/interface.d'
-//import filesize from "filesize";
+import filesize from "filesize";
 
 // TODO: add props & state
 interface State {
@@ -108,49 +108,56 @@ class Search extends React.Component<Props, State> {
                 dataIndex: 'Size',
                 searchable: false,
                 width: '1px',
-                // render: rowData => <span style={{ whiteSpace: "nowrap" }}>{ filesize(rowData.Size) }</span>
+                sorter: (a:any, b:any) => a.Size - b.Size,
+                render: (text:any, record:any, index:any) => <span style={{ whiteSpace: "nowrap" }}>{  filesize(text) }</span>
             },
             {
                 title: 'Files',
                 dataIndex: 'Files',
                 searchable: false,
                 width: '1px',
+                sorter: (a:any, b:any) => a.Files - b.Files
             },
             {
                 title: 'Category',
                 dataIndex: 'CategoryDesc',
-                searchable: false,
                 width: '1px',
+                sorter: (a:any, b:any) => a.CategoryDesc.localeCompare(b.CategoryDesc)
             },
             {
                 title: 'Grabs',
                 dataIndex: 'Grabs',
                 searchable: false,
                 width: '1px',
+                sorter: (a:any, b:any) => a.Grabs - b.Grabs
             },
             {
                 title: 'Seeds',
                 dataIndex: 'Seeders',
                 searchable: false,
                 width: '1px',
+                sorter: (a:any, b:any) => a.Seeders - b.Seeders
             },
             {
                 title: 'Leechers',
                 dataIndex: 'Peers',
                 searchable: false,
                 width: '1px',
+                sorter: (a:any, b:any) => a.Peers - b.Peers
             },
             {
                 title: 'DF',
                 dataIndex: 'DownloadVolumeFactor',
                 searchable: false,
                 width: '1px',
+                sorter: (a:any, b:any) => a.DownloadVolumeFactor - b.DownloadVolumeFactor
             },
             {
                 title: 'UF',
                 dataIndex: 'UploadVolumeFactor',
                 searchable: false,
                 width: '1px',
+                sorter: (a:any, b:any) => a.UploadVolumeFactor - b.UploadVolumeFactor
             },
             {
                 title: 'DL',

@@ -1,11 +1,12 @@
 import * as React from "react";
 import {connect} from "react-redux";
 import {RootState} from "../store/reducers";
-import {IndexerConfig, IndexersConfig} from "../store/types/indexersConfig";
+import {IndexersConfig} from "../store/types/indexersConfig";
 import {Card, Table} from "antd";
 
+// TODO: review any types
 interface State {
-    dataTable: Array<IndexerConfig>
+    dataTable: Array<object>
 }
 
 interface Props {
@@ -33,7 +34,12 @@ class Indexers extends React.Component<Props, State> {
 
     componentDidMount() {
 
-        this.setState({ dataTable: this.props.indexers.filter(indexer => indexer.configured) });
+        this.setState({ dataTable:
+                this.props.indexers.filter(indexer => indexer.configured).map((indexer: any) => {
+                    indexer["key"] = indexer.id;
+                    return indexer;
+                })
+        });
 
         /*
         let results = [];
@@ -88,14 +94,12 @@ class Indexers extends React.Component<Props, State> {
             {
                 title: 'Indexer',
                 dataIndex: 'id',
-                key: 'id',
                 sorter: (a:any, b:any) => a.id.localeCompare(b.id)
                 //render: rowData => rowData.indexerRender
             },
             {
                 title: 'Actions',
                 dataIndex: 'name',
-                key: 'name',
                 searchable: false,
                 sorting: false,
                 width: '80%',
@@ -105,7 +109,7 @@ class Indexers extends React.Component<Props, State> {
 
         return (
             <Card title="Configured indexers" extra={<a href="#">More</a>} style={{ width: "100%" }}>
-                <Table dataSource={this.state.dataTable} columns={columns} size="small" pagination={{position:["bottomLeft"]}}/>
+                <Table bordered dataSource={this.state.dataTable} columns={columns} size="small" pagination={{position:["bottomLeft"]}}/>
             </Card>
         );
     }
