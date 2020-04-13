@@ -11,52 +11,7 @@ import MagnetIcon from "../assets/magnet.svg";
 import DownloadIcon from "../assets/download.svg";
 import UploadIcon from "../assets/upload.svg";
 import "./Search.css";
-
-// TODO: move interfaces y api a otro lado (documentar campos)
-interface SearchResult {
-    BannerUrl: string
-    BlackholeLink: string
-    Category: Array<number>
-    CategoryDesc: string
-    Comments: string
-    Description: string
-    DownloadVolumeFactor: number
-    Files: number
-    FirstSeen: string
-    Gain: number
-    Grabs: number
-    Guid: string
-    Imdb: number
-    InfoHash: string
-    Link: string
-    MagnetUri: string
-    MinimumRatio: number
-    MinimumSeedTime: number
-    Peers: number
-    PublishDate: string
-    RageID: number
-    Seeders: number
-    Size: number
-    Title: string
-    TMDb: number
-    Tracker: string
-    TrackerId: string
-    TVDBId: number
-    UploadVolumeFactor: number
-}
-
-interface SearchIndexer {
-    ID: string
-    Name: string
-    Status: number
-    Results: number
-    Error: string
-}
-
-interface SearchResponse {
-    Results: Array<SearchResult>
-    Indexers: Array<SearchIndexer>
-}
+import {getSearchResults, SearchResponse, SearchResult} from "../api/search";
 
 
 // TODO: add props & state
@@ -102,35 +57,15 @@ class Search extends React.Component<Props, State> {
 */
     }
 
-    // TODO: move to utils
-    encodeQueryData(data: Array<Array<string>>) {
-        let ret: Array<string> = [];
-        data.forEach((d: Array<string>) => {
-            ret.push(encodeURIComponent(d[0]) + '=' + encodeURIComponent(d[1]));
-        });
-        return ret.join('&');
-    }
-
     handleSubmit(values: Store) {
-        let qc: Array<Array<string>> = [];
-        qc.push(["apikey", this.props.apiKey]);
-
-        let searchTerm = values.query ? values.query : "";
-        qc.push(["Query", searchTerm]);
-
-        if (values.trackers) {
-            values.trackers.forEach((tracker: string) => {
-                qc.push(["Tracker[]", tracker]);
+        // TODO: add categories
+        getSearchResults(this.props.apiKey, values.query, values.trackers)
+            .then(response => {
+                this.setState({ searchResponse: response.data })
             })
-        }
-
-        fetch("/api/v2.0/indexers/all/results?" + this.encodeQueryData(qc))
-            .then(res => res.json())
-            .then((data) => {
-                this.setState({ searchResponse: data })
-            })
-            .catch(console.error)
-
+            .catch(error => {
+                console.error(error);
+            });
     }
 
     jackettTimespan(date: string) {
