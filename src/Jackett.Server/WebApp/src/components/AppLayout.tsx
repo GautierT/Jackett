@@ -2,7 +2,7 @@ import React from 'react';
 import {HashRouter, Route, Switch} from 'react-router-dom';
 import {Layout} from 'antd';
 
-import {ServerConfig} from "../store/types/serverConfig";
+import {ServerConfig} from "../api/configuration";
 import Sidebar from "./Sidebar";
 import Search from "../pages/Search";
 import Configuration from "../pages/Configuration";

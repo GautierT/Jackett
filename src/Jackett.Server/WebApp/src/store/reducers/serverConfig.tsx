@@ -1,10 +1,9 @@
 import {
-    ServerConfigActionTypes,
-    ServerConfigState,
-    FETCH_CONFIG_ERROR,
-    FETCH_CONFIG_PENDING,
-    FETCH_CONFIG_SUCCESS, ServerConfig, UPDATE_CONFIG_PENDING, UPDATE_CONFIG_SUCCESS, UPDATE_CONFIG_ERROR
+    ServerConfigActionTypes, ServerConfigState,
+    FETCH_CONFIG_ERROR, FETCH_CONFIG_PENDING, FETCH_CONFIG_SUCCESS,
+    UPDATE_CONFIG_PENDING, UPDATE_CONFIG_SUCCESS, UPDATE_CONFIG_ERROR
 } from "../types/serverConfig";
+import {ServerConfig} from "../../api/configuration";
 
 //
 // Initial state

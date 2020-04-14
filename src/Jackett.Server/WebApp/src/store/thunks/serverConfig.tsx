@@ -1,12 +1,9 @@
 import {Dispatch} from "redux";
 import {
-    fetchConfigError,
-    fetchConfigPending,
-    fetchConfigSuccess, updateConfigError,
-    updateConfigPending,
-    updateConfigSuccess
+    fetchConfigError, fetchConfigPending, fetchConfigSuccess,
+    updateConfigError, updateConfigPending, updateConfigSuccess
 } from "../actions/serverConfig";
-import {ServerConfig} from "../types/serverConfig";
+import {getServerConfig, postServerConfig, ServerConfig} from "../../api/configuration";
 
 //
 // Thunks
@@ -14,35 +11,33 @@ import {ServerConfig} from "../types/serverConfig";
 export function fetchServerConfig() {
     return (dispatch: Dispatch) => {
         dispatch(fetchConfigPending());
-        fetch('/api/v2.0/server/config')
-            .then(res => res.json())
-            .then(res => {
-                dispatch(fetchConfigSuccess(res));
+
+        getServerConfig()
+            .then(response => {
+                dispatch(fetchConfigSuccess(response.data));
             })
             .catch(error => {
+                // TODO: show the error
+                console.log(error);
                 dispatch(fetchConfigError("Error fetching config API!"));
-            })
+            });
     }
 }
 
 export function updateServerConfig(data: ServerConfig) {
     return (dispatch: Dispatch) => {
         dispatch(updateConfigPending());
-        fetch('/api/v2.0/server/config', {
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers:{
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(res => res.json())
-            .then(res => {
-                // TODO: the response format is different
+
+        postServerConfig(data)
+            .then(() => {
+                // TODO: the response format is different, this should be changed in the back
                 dispatch(updateConfigSuccess(data));
             })
             .catch(error => {
+                // TODO: show the error
+                console.log(error);
                 dispatch(updateConfigError("Error updating config!"));
-            })
+            });
     }
 }
 

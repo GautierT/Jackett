@@ -5,7 +5,7 @@ import {Button, Card, Cascader, Col, DatePicker, Form, Input, InputNumber, Row, 
 
 import {updateServerConfig} from "../store/thunks/serverConfig";
 import {RootState} from "../store/reducers";
-import {ServerConfig} from "../store/types/serverConfig";
+import {ServerConfig} from "../api/configuration";
 
 interface State extends ServerConfig {
 }

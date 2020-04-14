@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons/lib";
 
 import {RootState} from "../store/reducers";
-import {ServerConfig} from "../store/types/serverConfig";
+import {ServerConfig} from "../api/configuration";
 import JackettLogo from "../assets/jackett_logo.png";
 import "./Sidebar.css";
 

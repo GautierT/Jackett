@@ -1,28 +1,7 @@
+import {ServerConfig} from "../../api/configuration";
 
 //
 // Interfaces
-
-export interface ServerConfig {
-  api_key: string
-  app_version: string
-  basepathoverride: string
-  blackholedir: string
-  can_run_netcore: boolean
-  external: boolean
-  logging: boolean
-  notices: Array<string>
-  omdbkey: string
-  omdburl: string
-  password: string
-  port: number
-  prerelease: boolean
-  proxy_password: string
-  proxy_port: number
-  proxy_type: number
-  proxy_url: string
-  proxy_username: string
-  updatedisabled: boolean
-}
 
 export interface ServerConfigState {
     isLoaded: boolean
@@ -68,7 +47,6 @@ interface UpdateConfigErrorAction {
     type: typeof UPDATE_CONFIG_ERROR
     error: string
 }
-
 
 export type ServerConfigActionTypes = FetchConfigPendingAction | FetchConfigSuccessAction | FetchConfigErrorAction |
     UpdateConfigPendingAction | UpdateConfigSuccessAction | UpdateConfigErrorAction
