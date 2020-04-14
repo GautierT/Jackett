@@ -47,13 +47,13 @@ export interface SearchResponse {
     Indexers: Array<SearchIndexer>
 }
 
-export function getSearchResults(apikey: string, query?: string, trackers?: Array<string>): Promise<AxiosResponse<SearchResponse>> {
+export function getSearchResults(apikey: string, query?: string, indexers?: Array<string>): Promise<AxiosResponse<SearchResponse>> {
     let qc: Array<Array<string>> = [];
     qc.push(["apikey", apikey]);
     qc.push(["Query", query ? query : ""]);
-    if (trackers) {
-        trackers.forEach((tracker: string) => {
-            qc.push(["Tracker[]", tracker]);
+    if (indexers) {
+        indexers.forEach((indexer: string) => {
+            qc.push(["Tracker[]", indexer]);
         })
     }
 

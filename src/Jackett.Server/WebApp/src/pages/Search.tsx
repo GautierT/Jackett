@@ -1,25 +1,28 @@
 import React from 'react';
 import {connect} from "react-redux";
+import {RouteComponentProps, withRouter} from "react-router";
 import {RootState} from "../store/reducers";
 import {IndexersConfig} from "../store/types/indexersConfig";
 import {Card, Select, Table, Form, Input, Button, Tag} from 'antd';
 import {Store} from 'rc-field-form/lib/interface.d'
-import filesize from "filesize";
-import moment from "moment";
 import {ColumnsType} from "antd/lib/table/interface";
+import filesize from "filesize";
+import qs from "qs"
+import {getSearchResults, SearchResponse, SearchResult} from "../api/search";
+import {jackettTimespan} from "../utils";
+import "./Search.css";
 import MagnetIcon from "../assets/magnet.svg";
 import DownloadIcon from "../assets/download.svg";
 import UploadIcon from "../assets/upload.svg";
-import "./Search.css";
-import {getSearchResults, SearchResponse, SearchResult} from "../api/search";
-
+import {FormInstance} from "antd/lib/form";
 
 // TODO: add props & state
 interface State {
+    isLoading: boolean
     searchResponse: SearchResponse
 }
 
-interface Props {
+interface Props extends RouteComponentProps {
     apiKey: string
     indexers: IndexersConfig
 }
@@ -35,61 +38,64 @@ const mapDispatchToProps = {
 }
 
 class Search extends React.Component<Props, State> {
+    formRef = React.createRef<FormInstance>();
 
     constructor(props: Props) {
         super(props);
         this.state = {
+            isLoading: false,
             searchResponse: {} as SearchResponse
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
+        // get form values from url
+        const searchTerm = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).query;
+        const searchIndexers = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).indexers;
+        const searchCategories = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).cats;
 
+        const form = this.formRef.current;
+        if (form) {
+            // set form values
+            form.setFieldsValue({
+                query: searchTerm,
+                indexers: searchIndexers,
+                cats: searchCategories
+            });
 
-        /*
-        fetch(`/api/v2.0/indexers/all/results?apikey=${this.props.apiKey}&Query=&Tracker%5B%5D=1337x`)
-            .then(res => res.json())
-            .then((data) => {
-                this.setState({ dataTable: data.Results })
-            })
-            .catch(console.error)
-*/
+            // perform search
+            if (typeof searchTerm !== 'undefined') {
+                form.submit();
+            }
+        }
     }
 
     handleSubmit(values: Store) {
+        if (this.state.isLoading)
+            return;
+
         // TODO: add categories
-        getSearchResults(this.props.apiKey, values.query, values.trackers)
+        // perform search
+        this.setState({ isLoading: true })
+        getSearchResults(this.props.apiKey, values.query, values.indexers)
             .then(response => {
-                this.setState({ searchResponse: response.data })
+                this.setState({ isLoading: false, searchResponse: response.data })
             })
             .catch(error => {
+                // TODO: show the error
                 console.error(error);
+                this.setState({ isLoading: false })
             });
-    }
 
-    jackettTimespan(date: string) {
-        const now = moment();
-        const from = moment(date);
-        const timeSpan = moment.duration(now.diff(from));
-
-        const minutes = timeSpan.asMinutes();
-        if (minutes < 120) {
-            return Math.round(minutes) + 'm ago';
-        }
-
-        const hours = timeSpan.asHours();
-        if (hours < 48) {
-            return Math.round(hours) + 'h ago';
-        }
-
-        const days = timeSpan.asDays();
-        if (days < 365) {
-            return Math.round(days) + 'd ago';
-        }
-
-        const years = timeSpan.asYears();
-        return Math.round(years) + 'y ago';
+        // change url params
+        this.props.history.push({
+            search: qs.stringify({
+                query: values.query,
+                indexers: values.indexers,
+                cats: values.cats
+            })
+        });
     }
 
     downloadLinks(record: SearchResult) {
@@ -132,7 +138,7 @@ class Search extends React.Component<Props, State> {
 
         if (record.UploadVolumeFactor === 0) {
             labels.push(<Tag color="volcano">NO UPLOAD</Tag>);
-        } else if (record.UploadVolumeFactor != 1) {
+        } else if (record.UploadVolumeFactor !== 1) {
             labels.push(<Tag color="blue">{(record.UploadVolumeFactor * 100).toFixed(0) + " % UL"}</Tag>);
         }
 
@@ -154,7 +160,7 @@ class Search extends React.Component<Props, State> {
                 width: '1px',
                 defaultSortOrder: 'ascend',
                 sorter: (a:SearchResult, b:SearchResult) => b.PublishDate.localeCompare(a.PublishDate),
-                render: (text:string, record:SearchResult) => <span style={{whiteSpace: "nowrap"}}>{this.jackettTimespan(record.PublishDate)}</span>
+                render: (text:string, record:SearchResult) => <span style={{whiteSpace: "nowrap"}}>{jackettTimespan(record.PublishDate)}</span>
             },
             {
                 title: 'Tracker',
@@ -242,20 +248,21 @@ class Search extends React.Component<Props, State> {
                         layout="inline"
                         style={{marginBottom: "16px"}}
                         onFinish={this.handleSubmit}
+                        ref={this.formRef}
                     >
                         <Form.Item label="Query" name="query">
                             <Input placeholder="search term" style={{ width: '350px' }}/>
                         </Form.Item>
-                        <Form.Item label="Trackers" name="trackers">
+                        <Form.Item label="Indexers" name="indexers">
                             <Select
                                 mode="multiple"
                                 style={{ width: '350px' }}
-                                placeholder="all trackers"
+                                placeholder="all indexers"
                             >
                                 {children}
                             </Select>
                         </Form.Item>
-                        <Form.Item label="Categories" name="categories">
+                        <Form.Item label="Categories" name="cats">
                             <Select
                                 mode="multiple"
                                 style={{ width: '350px' }}
@@ -265,7 +272,7 @@ class Search extends React.Component<Props, State> {
                             </Select>
                         </Form.Item>
                         <Form.Item >
-                            <Button type="primary" htmlType="submit">Search</Button>
+                            <Button type="primary" htmlType="submit" loading={this.state.isLoading}>Search</Button>
                         </Form.Item>
                     </Form>
                 </div>
@@ -275,6 +282,7 @@ class Search extends React.Component<Props, State> {
                     size="small"
                     pagination={{position:["bottomLeft"]}}
                     showSorterTooltip={false}
+                    loading={this.state.isLoading}
                 />
             </Card>
         );
@@ -282,4 +290,4 @@ class Search extends React.Component<Props, State> {
 
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Search);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Search));
