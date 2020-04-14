@@ -1,4 +1,5 @@
-import {http, encodeQueryData} from "./index"
+import qs from "qs"
+import {http} from "./index"
 import {AxiosResponse} from "axios";
 
 // TODO: document the fields
@@ -48,17 +49,14 @@ export interface SearchResponse {
 }
 
 export function getSearchResults(apikey: string, query?: string, indexers?: Array<string>): Promise<AxiosResponse<SearchResponse>> {
-    let qc: Array<Array<string>> = [];
-    qc.push(["apikey", apikey]);
-    qc.push(["Query", query ? query : ""]);
-    if (indexers) {
-        indexers.forEach((indexer: string) => {
-            qc.push(["Tracker[]", indexer]);
-        })
-    }
+    const queryParams = qs.stringify({
+        "apikey": apikey,
+        "Query": query || "",
+        "Tracker": indexers
+    }, { arrayFormat: 'brackets' });
 
     return http.request<SearchResponse>({
-        url: "/api/v2.0/indexers/all/results?" + encodeQueryData(qc),
+        url: "/api/v2.0/indexers/all/results?" + queryParams,
         method: "GET"
     });
 }

@@ -55,6 +55,7 @@ class Search extends React.Component<Props, State> {
         const searchIndexers = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).indexers;
         const searchCategories = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).cats;
 
+        // TODO: check the values are in the list before adding
         const form = this.formRef.current;
         if (form) {
             // set form values
@@ -94,7 +95,7 @@ class Search extends React.Component<Props, State> {
                 query: values.query,
                 indexers: values.indexers,
                 cats: values.cats
-            })
+            }, { arrayFormat: 'brackets' })
         });
     }
 
