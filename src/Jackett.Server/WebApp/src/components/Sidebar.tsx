@@ -1,183 +1,242 @@
 import React from 'react';
 import {connect} from "react-redux";
-import {Link} from "react-router-dom";
+import {Link, withRouter} from 'react-router-dom';
+import {RouteComponentProps} from "react-router";
+import {Layout, Menu} from 'antd';
+import {
+    CloudDownloadOutlined, DesktopOutlined, FileAddOutlined, FileSearchOutlined, FileTextOutlined, GithubOutlined,
+    QuestionCircleOutlined, SafetyCertificateOutlined, SearchOutlined, SettingOutlined, StarOutlined
+} from "@ant-design/icons/lib";
+
 import {RootState} from "../store/reducers";
 import {ServerConfig} from "../store/types/serverConfig";
-
-import { Layout, Menu } from 'antd';
-import {
-    DesktopOutlined,
-    UserOutlined,
-} from '@ant-design/icons';
-
-import logo from "../assets/jackett_logo.png";
+import JackettLogo from "../assets/jackett_logo.png";
 import "./Sidebar.css";
 
-interface Props {
-    config: ServerConfig
+interface SidebarSubMenu {
+    label: string
+    icon: React.ReactElement
+    path: string
+}
+
+interface SidebarMenu {
+    label: string
+    icon: React.ReactElement
+    subMenus: Array<SidebarSubMenu>
+}
+
+interface Props extends RouteComponentProps {
+    serverConfig: ServerConfig
+}
+
+interface State {
+    lastOpenKey: string
+    openKeys: Array<string>
+    selectedKeys: Array<string>
 }
 
 function mapStateToProps(state: RootState) {
     return {
-        config: state.config.config
+        serverConfig: state.config.config
     };
 }
 
-const mapDispatchToProps = {
-}
+class Sidebar extends React.Component<Props, State> {
 
-class Sidebar extends React.Component<Props, {}> {
-    state = {
-        collapsed: false,
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            lastOpenKey: "",
+            openKeys: [] as Array<string>,
+            selectedKeys: [] as Array<string>
+        };
+        this.handleOnOpenChange = this.handleOnOpenChange.bind(this);
+        this.handleOnClick = this.handleOnClick.bind(this);
+    }
+
+    sidebarMenu:Array<SidebarMenu> = [
+        {
+            label: "Indexers",
+            icon: <StarOutlined />,
+            subMenus: [
+                {
+                    label: "Indexers",
+                    icon: <StarOutlined />,
+                    path: "/"
+                },
+                {
+                    label: "Add Indexer",
+                    icon: <FileAddOutlined />,
+                    path: "/addindexer"
+                }
+            ]
+        },
+        {
+            label: "Search",
+            icon: <SearchOutlined />,
+            subMenus: [
+                {
+                    label: "Search",
+                    icon: <SearchOutlined />,
+                    path: "/search"
+                },
+                {
+                    label: "Search cache",
+                    icon: <FileSearchOutlined />,
+                    path: "/searchcache"
+                }
+            ]
+        },
+        {
+            label: "Settings",
+            icon: <SettingOutlined />,
+            subMenus: [
+                {
+                    label: "General",
+                    icon: <SettingOutlined />,
+                    path: "/configuration"
+                },
+                {
+                    label: "Security",
+                    icon: <SafetyCertificateOutlined />,
+                    path: "/security"
+                }
+            ]
+        },
+        {
+            label: "System",
+            icon: <DesktopOutlined/>,
+            subMenus: [
+                {
+                    label: "Status",
+                    icon: <DesktopOutlined/>,
+                    path: "/status"
+                },
+                {
+                    label: "Logs",
+                    icon: <FileTextOutlined />,
+                    path: "/logs"
+                },
+                {
+                    label: "Updates",
+                    icon: <CloudDownloadOutlined />,
+                    path: "/updates"
+                }
+            ]
+        },
+        {
+            label: "Help",
+            icon: <QuestionCircleOutlined />,
+            subMenus: [
+                {
+                    label: "Help",
+                    icon: <QuestionCircleOutlined />,
+                    path: "/help"
+                },
+                {
+                    label: "Report an issue",
+                    icon: <GithubOutlined />,
+                    path: "/report"
+                }
+            ]
+        }
+    ];
+
+    handleOnOpenChange(openKeys: string[]) {
+        if (openKeys.length > 1) {
+            const last = openKeys.pop() as string;
+            this.setState({
+                lastOpenKey: last,
+                openKeys: [last],
+                selectedKeys: [last + "_0"]
+            });
+            const firstSubmenuPath = this.sidebarMenu[parseInt(last)].subMenus[0].path;
+            this.props.history.push(firstSubmenuPath);
+        } else {
+            this.setState({
+                openKeys: [this.state.lastOpenKey]
+            });
+        }
+    }
+
+    handleOnClick(params: any) {
+        const { key } = params;
+        this.setState({
+            selectedKeys: [key]
+        });
     };
 
-    onCollapse = (collapsed: boolean) => {
-        console.log(collapsed);
-        this.setState({ collapsed });
-    };
+    componentDidMount() {
+        const {pathname} = this.props.location;
+        let lastOpenKey = "0";
+        let defaultOpenKeys = ["0"];
+        let defaultSelectedKeys = ["0_0"];
+        this.sidebarMenu.forEach((menu, a) => {
+            menu.subMenus.forEach((subMenu, b) => {
+                if (subMenu.path === pathname) {
+                    lastOpenKey = a.toString();
+                    defaultOpenKeys = [a.toString()];
+                    defaultSelectedKeys = [a.toString() + "_" + b.toString()];
+                }
+            })
+        });
+        this.setState({
+            lastOpenKey: lastOpenKey,
+            openKeys: defaultOpenKeys,
+            selectedKeys: defaultSelectedKeys
+        });
+    }
 
     render() {
         return (
-            <Layout.Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse} width={230}>
+            <Layout.Sider width={230}>
                 <div className="jackett-logo">
-                    <img src={logo}/>
+                    <img src={JackettLogo} alt="Jackett logo"/>
                     <span>Jackett</span>
                 </div>
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-                    <Menu.SubMenu
-                        key="sub1"
-                        title={
-                            <span>
-                              <UserOutlined/>
-                              <span>Indexers</span>
-                            </span>
-                        }
-                    >
-                        <Menu.Item key="1">
-                            <DesktopOutlined/>
-                            <span>Indexers</span>
-                            <Link to="/" />
-                        </Menu.Item>
-                        <Menu.Item key="2">
-                            <DesktopOutlined/>
-                            <span>Add Indexer</span>
-                            <Link to="/addindexer" />
-                        </Menu.Item>
-                    </Menu.SubMenu>
-                    <Menu.SubMenu
-                        key="sub2"
-                        title={
-                            <span>
-                              <UserOutlined/>
-                              <span>Search</span>
-                            </span>
-                        }
-                    >
-                        <Menu.Item key="3">
-                            <DesktopOutlined/>
-                            <span>Search</span>
-                            <Link to="/search" />
-                        </Menu.Item>
-                        <Menu.Item key="4">
-                            <DesktopOutlined/>
-                            <span>Search cache</span>
-                            <Link to="/cache" />
-                        </Menu.Item>
-                    </Menu.SubMenu>
-                    <Menu.SubMenu
-                        key="sub3"
-                        title={
-                            <span>
-                              <UserOutlined/>
-                              <span>Settings</span>
-                            </span>
-                        }
-                    >
-                        <Menu.Item key="5">
-                            <DesktopOutlined/>
-                            <span>General</span>
-                            <Link to="/configuration" />
-                        </Menu.Item>
-                        <Menu.Item key="6">
-                            <DesktopOutlined/>
-                            <span>Security</span>
-                            <Link to="/security" />
-                        </Menu.Item>
-                    </Menu.SubMenu>
-                    <Menu.SubMenu
-                        key="sub4"
-                        title={
-                            <span>
-                              <UserOutlined/>
-                              <span>System</span>
-                            </span>
-                        }
-                    >
-                        <Menu.Item key="7">
-                            <DesktopOutlined/>
-                            <span>Status</span>
-                            <Link to="/status" />
-                        </Menu.Item>
-                        <Menu.Item key="8">
-                            <DesktopOutlined/>
-                            <span>Updates</span>
-                            <Link to="/updates" />
-                        </Menu.Item>
-                        <Menu.Item key="9">
-                            <DesktopOutlined/>
-                            <span>Logs</span>
-                            <Link to="/logs" />
-                        </Menu.Item>
-                    </Menu.SubMenu>
+                <Menu
+                    theme="dark"
+                    onOpenChange={this.handleOnOpenChange}
+                    openKeys={this.state.openKeys}
+                    selectedKeys={this.state.selectedKeys}
+                    onClick={this.handleOnClick}
+                    mode="inline">
+
+                    {this.sidebarMenu.map((menu, a) => {
+                        return (
+                            <Menu.SubMenu
+                                key={a.toString()}
+                                title={
+                                    <span>
+                                        {menu.icon}
+                                        <span>{menu.label}</span>
+                                    </span>
+                                }>
+
+                                {menu.subMenus.map((subMenu, b) => {
+                                    return (
+                                        <Menu.Item key={a.toString() + "_" + b.toString()}>
+                                            {subMenu.icon}
+                                            <span>{subMenu.label}</span>
+                                            <Link to={{pathname: subMenu.path}} />
+                                        </Menu.Item>
+                                    )
+                                })}
+                            </Menu.SubMenu>
+                        )
+                    })}
+
                     <li>
                         <div className="jackett-version">
                             <a href="https://github.com/Jackett/Jackett" target="_blank" rel="noopener noreferrer">
-                                Version {this.props.config.app_version}
+                                Version {this.props.serverConfig.app_version}
                             </a>
                         </div>
                     </li>
                 </Menu>
             </Layout.Sider>
-
         );
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);
-
-
-/*
-
-
-        <Drawer
-            className={classes.drawer}
-            variant="permanent"
-            classes={{
-                paper: classes.drawerPaper,
-            }}
-            anchor="left"
-        >
-            <List>
-                <div className="logo">
-                    <img src={logo}/>
-                    <span>Jackett</span>
-                </div>
-            </List>
-            <Divider />
-            <List>
-                <SideBarItem path='/' label='Home' icon={<InboxIcon/>}/>
-                <SideBarItem path='/indexers' label='Indexers' icon={<InboxIcon/>}/>
-                <SideBarItem path='/search' label='Search' icon={<InboxIcon/>}/>
-                <SideBarItem path='/cache' label='Cache' icon={<InboxIcon/>}/>
-                <SideBarItem path='/logs' label='Logs' icon={<InboxIcon/>}/>
-                <SideBarItem path='/configuration' label='Configuration' icon={<InboxIcon/>}/>
-            </List>
-            <Divider/>
-            <List>
-                <SideBarItem path='/help' label='Help' icon={<InboxIcon/>}/>
-                <SideBarItem path='/report' label='Report an issue' icon={<InboxIcon/>}/>
-                <SideBarItem path='/update' label='Check for updates' icon={<InboxIcon/>}/>
-            </List>
-            <Divider/>
-        </Drawer>
- */
+export default withRouter(connect(mapStateToProps, null)(Sidebar));

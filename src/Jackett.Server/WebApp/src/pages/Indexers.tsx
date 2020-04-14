@@ -108,7 +108,7 @@ class Indexers extends React.Component<Props, State> {
         ];
 
         return (
-            <Card title="Configured indexers" extra={<a href="#">More</a>} style={{ width: "100%" }}>
+            <Card title="Configured indexers" style={{ width: "100%" }}>
                 <Table bordered dataSource={this.state.dataTable} columns={columns} size="small" pagination={{position:["bottomLeft"]}}/>
             </Card>
         );

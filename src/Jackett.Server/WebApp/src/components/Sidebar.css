@@ -1,8 +1,17 @@
+.site-layout .site-layout-background {
+    background: #fff;
+}
+
+.ant-menu-item-selected {
+    background-color: #227bce !important;
+}
+
 .jackett-logo {
-    padding-left: 34px;
-    padding-top: 8px;
     color: white;
     height: 60px;
+    margin-bottom: 15px;
+    padding-left: 38px;
+    padding-top: 15px;
 }
 
 .jackett-logo span {
@@ -29,8 +38,4 @@
 
 .jackett-version a {
     color: rgba(255, 255, 255, 0.65);
-}
-
-.site-layout .site-layout-background {
-    background: #fff;
 }
