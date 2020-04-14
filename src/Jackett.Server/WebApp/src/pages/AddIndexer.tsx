@@ -2,7 +2,7 @@ import * as React from "react";
 import {connect} from "react-redux";
 
 import {RootState} from "../store/reducers";
-import {IndexersConfig} from "../store/types/indexersConfig";
+import {IndexerConfig} from "../api/indexers";
 
 // TODO: review any types
 interface State {
@@ -10,12 +10,12 @@ interface State {
 }
 
 interface Props {
-    indexers: IndexersConfig
+    unConfiguredIndexers: Array<IndexerConfig>
 }
 
 function mapStateToProps(state: RootState) {
     return {
-        indexers: state.indexers.indexers
+        unConfiguredIndexers: state.indexers.unConfiguredIndexers
     };
 }
 

@@ -62,7 +62,3 @@ export default function configReducer(state = initialState, action: ServerConfig
 
 //
 // Selectors
-
-export const getServerConfigIsLoaded = (state: ServerConfigState) => state.isLoaded;
-export const getServerConfigError = (state: ServerConfigState) => state.error;
-export const getServerConfig = (state: ServerConfigState) => state.config;

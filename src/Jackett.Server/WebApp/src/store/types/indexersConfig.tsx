@@ -2,37 +2,13 @@
 //
 // Interfaces
 
-enum IndexerType {
-    Public = "public",
-    SemiPrivate = "semi-private",
-    Private = "private"
-}
-
-export interface IndexerCaps {
-    ID: string
-    Name: string
-}
-
-export interface IndexerConfig {
-    alternativesitelinks: Array<string>
-    caps: Array<IndexerCaps>
-    configured: boolean
-    description: string
-    id: string
-    language: string
-    last_error: string
-    name: string
-    potatoenabled: boolean
-    site_link: string
-    type: IndexerType
-}
-
-export interface IndexersConfig extends Array<IndexerConfig> {}
+import {IndexerConfig} from "../../api/indexers";
 
 export interface IndexersConfigState {
     isLoaded: boolean
     error: string
-    indexers: IndexersConfig
+    configuredIndexers: Array<IndexerConfig>
+    unConfiguredIndexers: Array<IndexerConfig>
 }
 
 //
@@ -48,7 +24,8 @@ interface FetchIndexersPendingAction {
 
 interface FetchIndexersSuccessAction {
     type: typeof FETCH_INDEXERS_SUCCESS
-    indexers: IndexersConfig
+    configuredIndexers: Array<IndexerConfig>
+    unConfiguredIndexers: Array<IndexerConfig>
 }
 
 interface FetchIndexersErrorAction {

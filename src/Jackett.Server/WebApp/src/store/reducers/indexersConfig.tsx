@@ -2,7 +2,6 @@ import {
     FETCH_INDEXERS_ERROR,
     FETCH_INDEXERS_PENDING,
     FETCH_INDEXERS_SUCCESS,
-    IndexersConfig,
     IndexersConfigState,
     IndexersConfigActionTypes
 } from "../types/indexersConfig";
@@ -13,7 +12,8 @@ import {
 const initialState: IndexersConfigState = {
     isLoaded: false,
     error: "",
-    indexers: {} as IndexersConfig,
+    configuredIndexers: [],
+    unConfiguredIndexers: []
 }
 
 //
@@ -30,7 +30,8 @@ export default function indexersReducer(state = initialState, action: IndexersCo
             return {
                 ...state,
                 isLoaded: true,
-                indexers: action.indexers
+                configuredIndexers: action.configuredIndexers,
+                unConfiguredIndexers: action.unConfiguredIndexers
             }
         case FETCH_INDEXERS_ERROR:
             return {
@@ -45,7 +46,3 @@ export default function indexersReducer(state = initialState, action: IndexersCo
 
 //
 // Selectors
-
-export const getIndexersIsLoaded = (state: IndexersConfigState) => state.isLoaded;
-export const getIndexersError = (state: IndexersConfigState) => state.error;
-export const getIndexers = (state: IndexersConfigState) => state.indexers;

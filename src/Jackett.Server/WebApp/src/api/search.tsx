@@ -1,6 +1,6 @@
 import qs from "qs"
-import {http} from "./index"
 import {AxiosResponse} from "axios";
+import {http} from "./index"
 
 // TODO: document the fields
 export interface SearchResult {

@@ -9,7 +9,7 @@ import {ColumnsType} from "antd/lib/table/interface";
 import {FormInstance} from "antd/lib/form";
 
 import {RootState} from "../store/reducers";
-import {IndexersConfig} from "../store/types/indexersConfig";
+import {IndexerConfig} from "../api/indexers";
 import {getSearchResults, SearchResponse, SearchResult} from "../api/search";
 import {jackettTimespan} from "../utils";
 import MagnetIcon from "../assets/magnet.svg";
@@ -25,13 +25,13 @@ interface State {
 
 interface Props extends RouteComponentProps {
     apiKey: string
-    indexers: IndexersConfig
+    configuredIndexers: Array<IndexerConfig>
 }
 
 function mapStateToProps(state: RootState) {
     return {
         apiKey: state.config.config.api_key,
-        indexers: state.indexers.indexers
+        configuredIndexers: state.indexers.configuredIndexers
     };
 }
 
@@ -238,7 +238,7 @@ class Search extends React.Component<Props, State> {
         ];
 
         // TODO: dont keep state, check indexer addition
-        const children = this.props.indexers.filter(indexer => indexer.configured).map(indexer => {
+        const children = this.props.configuredIndexers.map(indexer => {
             return (<Select.Option key={indexer.id} value={indexer.id}>{indexer.name}</Select.Option>)
         })
 

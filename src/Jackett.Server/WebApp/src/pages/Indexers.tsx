@@ -1,45 +1,23 @@
 import * as React from "react";
 import {connect} from "react-redux";
-import {RootState} from "../store/reducers";
-import {IndexersConfig} from "../store/types/indexersConfig";
 import {Card, Table} from "antd";
 
-// TODO: review any types
-interface State {
-    dataTable: Array<object>
-}
+import {RootState} from "../store/reducers";
+import {IndexerConfig} from "../api/indexers";
 
 interface Props {
-    indexers: IndexersConfig
+    configuredIndexers: Array<IndexerConfig>
 }
 
 function mapStateToProps(state: RootState) {
     return {
-        indexers: state.indexers.indexers
+        configuredIndexers: state.indexers.configuredIndexers
     };
 }
 
-const mapDispatchToProps = {
-}
-
-class Indexers extends React.Component<Props, State> {
-
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            dataTable: []
-        };
-    }
+class Indexers extends React.Component<Props, {}> {
 
     componentDidMount() {
-
-        this.setState({ dataTable:
-                this.props.indexers.filter(indexer => indexer.configured).map((indexer: any) => {
-                    indexer["key"] = indexer.id;
-                    return indexer;
-                })
-        });
 
         /*
         let results = [];
@@ -87,9 +65,6 @@ class Indexers extends React.Component<Props, State> {
 
     render() {
 
-        if (this.state.dataTable.length === 0)
-            return null;
-
         const columns = [
             {
                 title: 'Indexer',
@@ -109,10 +84,17 @@ class Indexers extends React.Component<Props, State> {
 
         return (
             <Card title="Configured indexers" style={{ width: "100%" }}>
-                <Table bordered dataSource={this.state.dataTable} columns={columns} size="small" pagination={{position:["bottomLeft"]}}/>
+                <Table
+                    bordered
+                    dataSource={this.props.configuredIndexers}
+                    columns={columns}
+                    rowKey="id"
+                    showSorterTooltip={false}
+                    size="small"
+                    pagination={{position:["bottomLeft"]}}/>
             </Card>
         );
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Indexers);
+export default connect(mapStateToProps, null)(Indexers);
