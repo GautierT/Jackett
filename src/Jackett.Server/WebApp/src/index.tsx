@@ -9,13 +9,15 @@ import './index.css';
 
 const store = configureStore();
 
+// TODO: enable React.StrictMode when antd fix the issues
+// https://github.com/ant-design/ant-design/issues/22493
 ReactDOM.render(
-  <React.StrictMode>
+  // <React.StrictMode>
       <Provider store={store}>
         <App />
       </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
+  // </React.StrictMode>
+  ,document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change

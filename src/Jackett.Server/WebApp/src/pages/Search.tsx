@@ -1,20 +1,21 @@
 import React from 'react';
 import {connect} from "react-redux";
 import {RouteComponentProps, withRouter} from "react-router";
-import {RootState} from "../store/reducers";
-import {IndexersConfig} from "../store/types/indexersConfig";
-import {Card, Select, Table, Form, Input, Button, Tag} from 'antd';
-import {Store} from 'rc-field-form/lib/interface.d'
-import {ColumnsType} from "antd/lib/table/interface";
 import filesize from "filesize";
 import qs from "qs"
+import {Store} from 'rc-field-form/lib/interface.d'
+import {Card, Select, Table, Form, Input, Button, Tag} from 'antd';
+import {ColumnsType} from "antd/lib/table/interface";
+import {FormInstance} from "antd/lib/form";
+
+import {RootState} from "../store/reducers";
+import {IndexersConfig} from "../store/types/indexersConfig";
 import {getSearchResults, SearchResponse, SearchResult} from "../api/search";
 import {jackettTimespan} from "../utils";
-import "./Search.css";
 import MagnetIcon from "../assets/magnet.svg";
 import DownloadIcon from "../assets/download.svg";
 import UploadIcon from "../assets/upload.svg";
-import {FormInstance} from "antd/lib/form";
+import "./Search.css";
 
 // TODO: add props & state
 interface State {
@@ -32,9 +33,6 @@ function mapStateToProps(state: RootState) {
         apiKey: state.config.config.api_key,
         indexers: state.indexers.indexers
     };
-}
-
-const mapDispatchToProps = {
 }
 
 class Search extends React.Component<Props, State> {
@@ -99,7 +97,7 @@ class Search extends React.Component<Props, State> {
         });
     }
 
-    downloadLinks(record: SearchResult) {
+    generateDownloadLinks(record: SearchResult) {
         let torrent = record.Link ? <a href={record.Link}><img src={DownloadIcon} alt="Download torrent"/></a> : '';
         let magnet = record.MagnetUri ? <a href={record.MagnetUri}><img src={MagnetIcon} alt="Download magnet"/></a> : '';
         let blackhole = record.BlackholeLink ? <a href={record.BlackholeLink}><img src={UploadIcon} alt="Save in Blackhole directory"/></a> : '';
@@ -110,8 +108,8 @@ class Search extends React.Component<Props, State> {
     }
 
     // TODO: add banner & description tooltip
-    // TODO: add tvrage y otros valores que no están en jackett ?
-    releaseTags(record: SearchResult) {
+    // TODO: add tvrage and other values available in the response ?
+    generateNameWithTags(record: SearchResult) {
         let labels = [];
 /*
         var TitleTooltip = "";
@@ -130,26 +128,29 @@ class Search extends React.Component<Props, State> {
 */
 
         if (record.DownloadVolumeFactor === 0) {
-            labels.push(<Tag color="green">FREELEECH</Tag>);
+            labels.push(<Tag color="green" key="dvf">FREELEECH</Tag>);
         } else if (record.DownloadVolumeFactor < 1) {
-            labels.push(<Tag color="geekblue">{(record.DownloadVolumeFactor * 100).toFixed(0) + " % DL"}</Tag>);
+            labels.push(<Tag color="geekblue" key="dvf">{(record.DownloadVolumeFactor * 100).toFixed(0) + " % DL"}</Tag>);
         } else if (record.DownloadVolumeFactor > 1) {
-            labels.push(<Tag color="red">{(record.DownloadVolumeFactor * 100).toFixed(0) + " % DL"}</Tag>);
+            labels.push(<Tag color="red" key="dvf">{(record.DownloadVolumeFactor * 100).toFixed(0) + " % DL"}</Tag>);
         }
 
         if (record.UploadVolumeFactor === 0) {
-            labels.push(<Tag color="volcano">NO UPLOAD</Tag>);
+            labels.push(<Tag color="volcano" key="uvf">NO UPLOAD</Tag>);
         } else if (record.UploadVolumeFactor !== 1) {
-            labels.push(<Tag color="blue">{(record.UploadVolumeFactor * 100).toFixed(0) + " % UL"}</Tag>);
+            labels.push(<Tag color="blue" key="uvf">{(record.UploadVolumeFactor * 100).toFixed(0) + " % UL"}</Tag>);
         }
 
         if (record.Imdb) {
             const imdbUrl = "http://www.imdb.com/title/tt" + ("0000000" + record.Imdb).slice(-8) + "/";
-            labels.push(<Tag color="gold"><a href={imdbUrl} title="IMDB" target="_blank" rel="noopener noreferrer">IMDB</a></Tag>);
+            labels.push(<Tag color="gold" key="imdb"><a href={imdbUrl} title="IMDB" target="_blank" rel="noopener noreferrer">IMDB</a></Tag>);
         }
 
         return (
-            [labels]
+            <span>
+                <a href={record.Comments} target="_blank" rel="noopener noreferrer">{record.Title}</a>
+                {" "}{[labels]}
+            </span>
         )
     }
 
@@ -175,14 +176,14 @@ class Search extends React.Component<Props, State> {
                 title: 'DL',
                 dataIndex: 'UploadVolumeFactor',
                 width: '1px',
-                render: (text:string, record:SearchResult) => this.downloadLinks(record)
+                render: (text:string, record:SearchResult) => this.generateDownloadLinks(record)
             },
             {
                 title: 'Name',
                 dataIndex: 'Title',
                 width: '100%',
                 sorter: (a:SearchResult, b:SearchResult) => a.Title.localeCompare(b.Title),
-                render: (text:string, record:SearchResult) => <span><a href={record.Comments} target="_blank" rel="noopener noreferrer">{record.Title}</a> {this.releaseTags(record)}</span>
+                render: (text:string, record:SearchResult) => this.generateNameWithTags(record)
             },
             {
                 title: 'Size',
@@ -281,6 +282,7 @@ class Search extends React.Component<Props, State> {
                 <Table
                     dataSource={this.state.searchResponse.Results}
                     columns={columns}
+                    rowKey="Guid"
                     size="small"
                     pagination={{position:["bottomLeft"]}}
                     showSorterTooltip={false}
@@ -292,4 +294,4 @@ class Search extends React.Component<Props, State> {
 
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Search));
+export default withRouter(connect(mapStateToProps, null)(Search));
