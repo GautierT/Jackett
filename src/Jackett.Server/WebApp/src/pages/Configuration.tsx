@@ -29,6 +29,7 @@ class Configuration extends React.Component<Props, State> {
 
     constructor (props: Props) {
         super(props);
+        // TODO: don't cache state!
         this.state = this.props.config;
         this.handleSubmit = this.handleSubmit.bind(this);
     }

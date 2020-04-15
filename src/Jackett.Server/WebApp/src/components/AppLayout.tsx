@@ -17,12 +17,12 @@ export default function AppLayout() {
                 <Sidebar serverConfig={{} as ServerConfig}/>
                 <Layout className="site-layout">
                     <Layout.Content style={{ margin: '16px' }}>
-                            <Switch>
-                                <Route path="/search" component={Search}/>
-                                <Route path="/configuration" component={Configuration}/>
-                                <Route path="/addindexer" component={AddIndexer}/>
-                                <Route path="/" component={Indexers}/>
-                            </Switch>
+                        <Switch>
+                            <Route path="/search" component={Search}/>
+                            <Route path="/configuration" component={Configuration}/>
+                            <Route path="/addindexer" component={AddIndexer}/>
+                            <Route path="/" component={Indexers}/>
+                        </Switch>
                     </Layout.Content>
                 </Layout>
             </Layout>
