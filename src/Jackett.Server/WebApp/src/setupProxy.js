@@ -1,7 +1,8 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const loginUrl = "/UI/Login";
-const onProxyRes = function (proxyRes, req, res) {
+
+const onProxyRes = function (proxyRes) {
     // replace redirect URL to avoid CORS and skip login if there is not admin pass
     if (proxyRes.headers.location && proxyRes.headers.location.includes(loginUrl)) {
         proxyRes.headers.location = loginUrl + "?ReturnUrl=%2F";
