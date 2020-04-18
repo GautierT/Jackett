@@ -1,5 +1,4 @@
 import React from 'react';
-import {connect} from "react-redux";
 import {Link, withRouter} from 'react-router-dom';
 import {RouteComponentProps} from "react-router";
 import {Layout, Menu} from 'antd';
@@ -8,8 +7,6 @@ import {
     QuestionCircleOutlined, SafetyCertificateOutlined, SearchOutlined, SettingOutlined, StarOutlined
 } from "@ant-design/icons/lib";
 
-import {RootState} from "../store/reducers";
-import {ServerConfig} from "../api/configuration";
 import JackettLogo from "../assets/jackett_logo.png";
 import style from "./Sidebar.module.css";
 
@@ -26,19 +23,13 @@ interface SidebarMenu {
 }
 
 interface Props extends RouteComponentProps {
-    serverConfig: ServerConfig
+    jackettVersion: string
 }
 
 interface State {
     lastOpenKey: string
     openKeys: Array<string>
     selectedKeys: Array<string>
-}
-
-function mapStateToProps(state: RootState) {
-    return {
-        serverConfig: state.config.config
-    };
 }
 
 class Sidebar extends React.Component<Props, State> {
@@ -50,8 +41,6 @@ class Sidebar extends React.Component<Props, State> {
             openKeys: [] as Array<string>,
             selectedKeys: [] as Array<string>
         };
-        this.handleOnOpenChange = this.handleOnOpenChange.bind(this);
-        this.handleOnClick = this.handleOnClick.bind(this);
     }
 
     sidebarMenu:Array<SidebarMenu> = [
@@ -142,7 +131,7 @@ class Sidebar extends React.Component<Props, State> {
         }
     ];
 
-    handleOnOpenChange(openKeys: string[]) {
+    handleOnOpenChange = (openKeys: string[]) => {
         if (openKeys.length > 1) {
             const last = openKeys.pop() as string;
             this.setState({
@@ -159,7 +148,7 @@ class Sidebar extends React.Component<Props, State> {
         }
     }
 
-    handleOnClick(params: any) {
+    handleOnClick = (params: any) => {
         const { key } = params;
         this.setState({
             selectedKeys: [key]
@@ -229,7 +218,7 @@ class Sidebar extends React.Component<Props, State> {
                     <li>
                         <div className={style.jackettVersion}>
                             <a href="https://github.com/Jackett/Jackett" target="_blank" rel="noopener noreferrer">
-                                Version {this.props.serverConfig.app_version}
+                                Version {this.props.jackettVersion}
                             </a>
                         </div>
                     </li>
@@ -239,4 +228,4 @@ class Sidebar extends React.Component<Props, State> {
     }
 }
 
-export default withRouter(connect(mapStateToProps, null)(Sidebar));
+export default withRouter(Sidebar);

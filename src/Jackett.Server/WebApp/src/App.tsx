@@ -4,6 +4,7 @@ import {Spin} from "antd";
 import 'antd/dist/antd.css';
 
 import {RootState} from "./store/reducers";
+import {ServerConfig} from "./api/configuration";
 import {fetchServerConfig} from "./store/thunks/serverConfig";
 import {fetchIndexersConfig} from "./store/thunks/indexersConfig";
 import {ServerConfigState} from "./store/types/serverConfig";
@@ -84,7 +85,7 @@ class App extends React.Component<Props, State> {
         // all loaded
         if (this.props.serverConfigState.isLoaded && this.props.indexersConfigState.isLoaded) {
             return (
-                <AppLayout/>
+                <AppLayout serverConfig={{} as ServerConfig}/>
             );
         }
 
