@@ -3,7 +3,7 @@ import {
     fetchConfigError, fetchConfigPending, fetchConfigSuccess,
     updateConfigError, updateConfigPending, updateConfigSuccess
 } from "../actions/serverConfig";
-import {getServerConfig, postServerConfig, ServerConfig} from "../../api/configuration";
+import {getServerConfig, postServerConfig, UpdateServerConfig} from "../../api/configuration";
 
 //
 // Thunks
@@ -24,19 +24,18 @@ export function fetchServerConfig() {
     }
 }
 
-export function updateServerConfig(data: ServerConfig) {
+export function updateServerConfig(updateConfig: UpdateServerConfig) {
     return (dispatch: Dispatch) => {
         dispatch(updateConfigPending());
 
-        postServerConfig(data)
+        postServerConfig(updateConfig)
             .then(() => {
-                // TODO: the response format is different, this should be changed in the back
-                dispatch(updateConfigSuccess(data));
+                // TODO: the response format is different from the request, this should be changed in the back
+                dispatch(updateConfigSuccess(updateConfig));
             })
             .catch(error => {
-                // TODO: show the error
-                console.log(error);
-                dispatch(updateConfigError("Error updating config!"));
+                const errorUpdate = error.response.data.error || error.message;
+                dispatch(updateConfigError(errorUpdate));
             });
     }
 }

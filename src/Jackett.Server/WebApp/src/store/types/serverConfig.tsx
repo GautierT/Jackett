@@ -1,4 +1,4 @@
-import {ServerConfig} from "../../api/configuration";
+import {ServerConfig, UpdateServerConfig} from "../../api/configuration";
 
 //
 // Interfaces
@@ -7,6 +7,7 @@ export interface ServerConfigState {
     isLoaded: boolean
     isUpdating: boolean
     error: string
+    errorUpdate: string
     config: ServerConfig
 }
 
@@ -40,12 +41,12 @@ interface UpdateConfigPendingAction {
 
 interface UpdateConfigSuccessAction {
     type: typeof UPDATE_CONFIG_SUCCESS
-    config: ServerConfig
+    updateConfig: UpdateServerConfig
 }
 
 interface UpdateConfigErrorAction {
     type: typeof UPDATE_CONFIG_ERROR
-    error: string
+    errorUpdate: string
 }
 
 export type ServerConfigActionTypes = FetchConfigPendingAction | FetchConfigSuccessAction | FetchConfigErrorAction |

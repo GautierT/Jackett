@@ -24,6 +24,23 @@ export interface ServerConfig {
     updatedisabled: boolean
 }
 
+export interface UpdateServerConfig {
+    basepathoverride: string
+    blackholedir: string
+    external: boolean
+    logging: boolean
+    omdbkey: string
+    omdburl: string
+    port: number
+    prerelease: boolean
+    proxy_password: string
+    proxy_port: number
+    proxy_type: number
+    proxy_url: string
+    proxy_username: string
+    updatedisabled: boolean
+}
+
 export function getServerConfig(): Promise<AxiosResponse<ServerConfig>> {
     return http.request<ServerConfig>({
         url: "/api/v2.0/server/config",
@@ -31,11 +48,11 @@ export function getServerConfig(): Promise<AxiosResponse<ServerConfig>> {
     });
 }
 
-export function postServerConfig(serverConfig: ServerConfig): Promise<AxiosResponse<void>> {
-    // TODO: the response format is different, this should be changed in the back
+export function postServerConfig(updateConfig: UpdateServerConfig): Promise<AxiosResponse<void>> {
+    // TODO: the response format is different, this should be changed in the backend
     return http.request<void>({
         url: "/api/v2.0/server/config",
         method: "POST",
-        data: serverConfig
+        data: updateConfig
     });
 }

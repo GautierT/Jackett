@@ -1,112 +1,179 @@
 import React from 'react';
 import {connect} from "react-redux";
 import {Store} from 'rc-field-form/lib/interface.d'
-import {Button, Card, Cascader, Col, DatePicker, Form, Input, InputNumber, Row, Select, Switch, TreeSelect} from 'antd';
+import {Button, Card, Form, Input, InputNumber, notification, Select, Switch} from 'antd';
 
 import {updateServerConfig} from "../store/thunks/serverConfig";
 import {RootState} from "../store/reducers";
-import {ServerConfig} from "../api/configuration";
-
-interface State extends ServerConfig {
-}
+import {ServerConfig, UpdateServerConfig} from "../api/configuration";
+import "./Configuration.css";
 
 interface Props {
     config: ServerConfig
-    updateServerConfig: (config: ServerConfig) => void
+    isUpdating: boolean
+    errorUpdate: string
+    updateServerConfig: (config: UpdateServerConfig) => void
 }
 
 function mapStateToProps(state: RootState) {
     return {
-        config: state.config.config
+        config: state.config.config,
+        isUpdating: state.config.isUpdating,
+        errorUpdate: state.config.errorUpdate
     };
 }
 
 const mapDispatchToProps = {
-    updateServerConfig: (config: ServerConfig) => updateServerConfig(config)
+    updateServerConfig: (config: UpdateServerConfig) => updateServerConfig(config)
 }
 
-class Configuration extends React.Component<Props, State> {
+class Configuration extends React.Component<Props, {}> {
+    proxyTypes: any = {
+        "0": "HTTP",
+        "1": "SOCKS4",
+        "2": "SOCKS5"
+    };
+    checkUpdate = false;
 
     constructor (props: Props) {
         super(props);
-        // TODO: don't cache state!
-        this.state = this.props.config;
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleSubmit(values: Store) {
-        const config = JSON.parse(JSON.stringify(this.props.config));
-        config.proxy_port = values.proxyPort;
-        this.props.updateServerConfig(config)
+    proxyTypeToValue(key: number) {
+        return this.proxyTypes[key]
     }
 
-    componentDidMount() {
+    proxyTypeToKey(value: string) {
+        const key = Object.keys(this.proxyTypes).find(key => this.proxyTypes[key] === value) || "0";
+        return parseInt(key)
+    }
 
+    handleSubmit(values: Store) {
+        notification.destroy();
+        this.checkUpdate = true;
+
+        const serverConfig: UpdateServerConfig = {
+            basepathoverride: values.basePathOverride,
+            blackholedir: values.blackholeDir,
+            external: values.externalAccess,
+            logging: values.enhancedLogging,
+            omdbkey: values.omdbKey,
+            omdburl: values.omdbURL,
+            port: values.serverPort,
+            prerelease: values.prerelease,
+            proxy_password: values.proxyPassword,
+            proxy_port: values.proxyPort,
+            proxy_type: this.proxyTypeToKey(values.proxyType),
+            proxy_url: values.proxyURL,
+            proxy_username: values.proxyUsername,
+            updatedisabled: values.updateDisabled
+        };
+        this.props.updateServerConfig(serverConfig);
     }
 
     render() {
+        if (this.props.errorUpdate) {
+            notification.error({
+                message: "Error updating the configuration",
+                description:this.props.errorUpdate,
+                placement: "bottomLeft",
+                duration: 0
+            });
+        }
+
+        if (this.checkUpdate && !this.props.isUpdating && !this.props.errorUpdate) {
+            notification.success({
+                message: "Configuration updated",
+                placement: "bottomLeft"
+            });
+            this.checkUpdate = false;
+        }
 
         return (
             <Card title="General configuration" style={{ width: "100%" }}>
-            <Row>
-                <Col span={12}>
                 <Form
-                    labelCol={{ span: 4 }}
-                    wrapperCol={{ span: 14 }}
+                    labelCol={{ span: 8 }}
+                    wrapperCol={{ span: 10 }}
                     layout="horizontal"
-                    initialValues={{
-                        proxyPort: this.props.config.proxy_port
-                    }}
+                    className="config-form"
                     onFinish={this.handleSubmit}
+                    initialValues={{
+                        serverPort: this.props.config.port,
+                        basePathOverride: this.props.config.basepathoverride,
+                        externalAccess: this.props.config.external,
+                        blackholeDir: this.props.config.blackholedir,
+                        enhancedLogging: this.props.config.logging,
+                        updateDisabled: this.props.config.updatedisabled,
+                        prerelease: this.props.config.prerelease,
+                        proxyType: this.proxyTypeToValue(this.props.config.proxy_type),
+                        proxyURL: this.props.config.proxy_url,
+                        proxyPort: this.props.config.proxy_port,
+                        proxyUsername: this.props.config.proxy_username,
+                        proxyPassword: this.props.config.proxy_password,
+                        omdbURL: this.props.config.omdburl,
+                        omdbKey: this.props.config.omdbkey
+                    }}
                 >
+                    <h3 className="config-title">Server</h3>
+                    <Form.Item label="Server port" name="serverPort">
+                        <InputNumber />
+                    </Form.Item>
+                    <Form.Item label="Base Path Override" name="basePathOverride">
+                        <Input placeholder="/jackett"/>
+                    </Form.Item>
+                    <Form.Item label="External access" name="externalAccess">
+                        <Switch defaultChecked={this.props.config.external}/>
+                    </Form.Item>
+                    <Form.Item label="Manual download Blackhole directory" name="blackholeDir">
+                        <Input placeholder="C:\torrents\" />
+                    </Form.Item>
+                    <Form.Item label="Enhanced logging" name="enhancedLogging">
+                        <Switch defaultChecked={this.props.config.logging}/>
+                    </Form.Item>
+
+                    <h3 className="config-title">Updates</h3>
+                    <Form.Item label="Disable auto update" name="updateDisabled">
+                        <Switch defaultChecked={this.props.config.updatedisabled}/>
+                    </Form.Item>
+                    <Form.Item label="Update to pre-release" name="prerelease">
+                        <Switch defaultChecked={this.props.config.prerelease}/>
+                    </Form.Item>
+
+                    <h3 className="config-title">Proxy</h3>
+                    <Form.Item label="Proxy type" name="proxyType">
+                        <Select>
+                            {Object.values(this.proxyTypes).map((value: any) => (
+                                <Select.Option value={value}>{value}</Select.Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label="Proxy URL" name="proxyURL">
+                        <Input placeholder="Blank for disable"/>
+                    </Form.Item>
                     <Form.Item label="Proxy port" name="proxyPort">
                         <InputNumber/>
                     </Form.Item>
-                    <Form.Item label="Input" name="input">
+                    <Form.Item label="Proxy username" name="proxyUsername">
                         <Input />
                     </Form.Item>
-                    <Form.Item label="Select">
-                        <Select>
-                            <Select.Option value="demo">Demo</Select.Option>
-                        </Select>
+                    <Form.Item label="Proxy password" name="proxyPassword">
+                        <Input />
                     </Form.Item>
-                    <Form.Item label="TreeSelect">
-                        <TreeSelect
-                            treeData={[
-                                { title: 'Light', value: 'light', children: [{ title: 'Bamboo', value: 'bamboo' }] },
-                            ]}
-                        />
+
+                    <h3 className="config-title">Other</h3>
+                    <Form.Item label="OMDB API URL" name="omdbURL">
+                        <Input placeholder="Blank for default"/>
                     </Form.Item>
-                    <Form.Item label="Cascader">
-                        <Cascader
-                            options={[
-                                {
-                                    value: 'zhejiang',
-                                    label: 'Zhejiang',
-                                    children: [
-                                        {
-                                            value: 'hangzhou',
-                                            label: 'Hangzhou',
-                                        },
-                                    ],
-                                },
-                            ]}
-                        />
+                    <Form.Item label="OMDB API key" name="omdbKey">
+                        <Input />
                     </Form.Item>
-                    <Form.Item label="DatePicker">
-                        <DatePicker />
-                    </Form.Item>
-                    <Form.Item label="Switch">
-                        <Switch />
-                    </Form.Item>
-                    <Form.Item label="">
-                        <Button type="primary" htmlType="submit">
+                    <Form.Item label="&nbsp;">
+                        <Button type="primary" htmlType="submit" disabled={this.props.isUpdating}>
                             Save
                         </Button>
                     </Form.Item>
                 </Form>
-                </Col>
-            </Row>
             </Card>
         )
     }

@@ -12,6 +12,7 @@ const initialState: ServerConfigState = {
     isLoaded: false,
     isUpdating: false,
     error: "",
+    errorUpdate: "",
     config: {} as ServerConfig
 }
 
@@ -40,19 +41,21 @@ export default function configReducer(state = initialState, action: ServerConfig
         case UPDATE_CONFIG_PENDING:
             return {
                 ...state,
-                isUpdating: true
+                isUpdating: true,
+                errorUpdate: "",
             }
         case UPDATE_CONFIG_SUCCESS:
             return {
                 ...state,
                 isUpdating: false,
-                config: action.config
+                errorUpdate: "",
+                config: {...state.config, ...action.updateConfig}
             }
         case UPDATE_CONFIG_ERROR:
             return {
                 ...state,
                 isUpdating: false,
-                error: action.error
+                errorUpdate: action.errorUpdate
             }
         default:
             return state;

@@ -3,7 +3,7 @@ import {
     FETCH_CONFIG_ERROR, FETCH_CONFIG_PENDING, FETCH_CONFIG_SUCCESS,
     UPDATE_CONFIG_PENDING, UPDATE_CONFIG_SUCCESS, UPDATE_CONFIG_ERROR
 } from "../types/serverConfig";
-import {ServerConfig} from "../../api/configuration";
+import {ServerConfig, UpdateServerConfig} from "../../api/configuration";
 
 //
 // Actions
@@ -34,16 +34,16 @@ export function updateConfigPending(): ServerConfigActionTypes {
     }
 }
 
-export function updateConfigSuccess(config: ServerConfig): ServerConfigActionTypes {
+export function updateConfigSuccess(updateConfig: UpdateServerConfig): ServerConfigActionTypes {
     return {
         type: UPDATE_CONFIG_SUCCESS,
-        config: config
+        updateConfig: updateConfig
     }
 }
 
-export function updateConfigError(error: string): ServerConfigActionTypes {
+export function updateConfigError(errorUpdate: string): ServerConfigActionTypes {
     return {
         type: UPDATE_CONFIG_ERROR,
-        error: error
+        errorUpdate: errorUpdate
     }
 }
