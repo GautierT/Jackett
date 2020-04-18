@@ -11,7 +11,7 @@ import {IndexersConfigState} from "./store/types/indexersConfig";
 import AppLayout from "./components/AppLayout";
 import {checkLogin, configureLoginInterceptor} from "./api/login";
 import Login from "./pages/Login";
-import './App.css';
+import style from './App.module.css';
 
 interface Props {
     serverConfigState: ServerConfigState
@@ -90,7 +90,7 @@ class App extends React.Component<Props, State> {
 
         // loading...
         return (
-            <div className="loading">
+            <div className={style.appLoading}>
                 <Spin size="large"/>
             </div>
         );

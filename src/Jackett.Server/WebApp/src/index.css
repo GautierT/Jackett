@@ -11,3 +11,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Ant */
+.site-layout .site-layout-background {
+    background: #fff;
+}
+
+.ant-menu-item-selected {
+    background-color: #227bce !important;
+}

@@ -1,4 +1,4 @@
-.login-center-screen {
+.centerScreen {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -7,31 +7,31 @@
     min-height: 100vh;
 }
 
-.login-form-custom {
+.formCustom {
     width: 300px;
     height: 400px;
 }
 
-.login-button-custom {
+.buttonCustom {
     margin-top: 10px;
 }
 
-.login-alert {
+.alert {
     margin-bottom: 20px;
 }
 
-.login-jackett-logo {
+.jackettLogo {
     color: #000000;
     margin-bottom: 20px;
 }
 
-.login-jackett-logo span {
+.jackettLogo span {
     font-size: 50px;
     padding-left: 12px;
     vertical-align: middle;
 }
 
-.login-jackett-logo img {
+.jackettLogo img {
     height: 60px;
     vertical-align: middle;
 }

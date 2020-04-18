@@ -22,7 +22,7 @@ function mapStateToProps(state: RootState) {
 const mapDispatchToProps = {
 }
 
-class AddIndexer extends React.Component<Props, State> {
+class IndexersAddIndexer extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
@@ -39,4 +39,4 @@ class AddIndexer extends React.Component<Props, State> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddIndexer);
+export default connect(mapStateToProps, mapDispatchToProps)(IndexersAddIndexer);

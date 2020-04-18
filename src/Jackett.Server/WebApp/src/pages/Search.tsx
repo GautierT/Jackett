@@ -15,7 +15,7 @@ import {jackettTimespan} from "../utils";
 import MagnetIcon from "../assets/magnet.svg";
 import DownloadIcon from "../assets/download.svg";
 import UploadIcon from "../assets/upload.svg";
-import "./Search.css";
+import style from "./Search.module.css";
 
 // TODO: add props & state
 interface State {
@@ -44,7 +44,6 @@ class Search extends React.Component<Props, State> {
             isLoading: false,
             searchResponse: {} as SearchResponse
         };
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -70,7 +69,7 @@ class Search extends React.Component<Props, State> {
         }
     }
 
-    handleSubmit(values: Store) {
+    handleSubmit = (values: Store) => {
         if (this.state.isLoading)
             return;
 
@@ -103,7 +102,7 @@ class Search extends React.Component<Props, State> {
         let blackhole = record.BlackholeLink ? <a href={record.BlackholeLink}><img src={UploadIcon} alt="Save in Blackhole directory"/></a> : '';
 
         return (
-            <span className="download-icons">{torrent} {magnet} {blackhole}</span>
+            <span className={style.downloadIcons}>{torrent} {magnet} {blackhole}</span>
         );
     }
 
@@ -249,7 +248,7 @@ class Search extends React.Component<Props, State> {
                 <div>
                     <Form
                         layout="inline"
-                        style={{marginBottom: "16px"}}
+                        className={style.formCustom}
                         onFinish={this.handleSubmit}
                         ref={this.formRef}
                     >
@@ -284,6 +283,7 @@ class Search extends React.Component<Props, State> {
                     columns={columns}
                     rowKey="Guid"
                     size="small"
+                    className={style.tableCustom}
                     pagination={{position:["bottomLeft"]}}
                     showSorterTooltip={false}
                     loading={this.state.isLoading}

@@ -11,7 +11,7 @@ import {
 import {RootState} from "../store/reducers";
 import {ServerConfig} from "../api/configuration";
 import JackettLogo from "../assets/jackett_logo.png";
-import "./Sidebar.css";
+import style from "./Sidebar.module.css";
 
 interface SidebarSubMenu {
     label: string
@@ -190,7 +190,7 @@ class Sidebar extends React.Component<Props, State> {
     render() {
         return (
             <Layout.Sider width={230}>
-                <div className="jackett-logo">
+                <div className={style.jackettLogo}>
                     <img src={JackettLogo} alt="Jackett logo"/>
                     <span>Jackett</span>
                 </div>
@@ -227,7 +227,7 @@ class Sidebar extends React.Component<Props, State> {
                     })}
 
                     <li>
-                        <div className="jackett-version">
+                        <div className={style.jackettVersion}>
                             <a href="https://github.com/Jackett/Jackett" target="_blank" rel="noopener noreferrer">
                                 Version {this.props.serverConfig.app_version}
                             </a>

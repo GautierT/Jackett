@@ -1,12 +1,5 @@
-.site-layout .site-layout-background {
-    background: #fff;
-}
 
-.ant-menu-item-selected {
-    background-color: #227bce !important;
-}
-
-.jackett-logo {
+.jackettLogo {
     color: white;
     height: 60px;
     margin-bottom: 15px;
@@ -14,20 +7,20 @@
     padding-top: 15px;
 }
 
-.jackett-logo span {
+.jackettLogo span {
     font-size: 30px;
     //font-weight: bold;
     padding-left: 12px;
     vertical-align: middle;
 }
 
-.jackett-logo img {
+.jackettLogo img {
     height: 40px;
     vertical-align: middle;
     filter: invert(100%);
 }
 
-.jackett-version {
+.jackettVersion {
     padding-top: 10px;
     padding-left: 50px;
     height: 40px;
@@ -36,6 +29,6 @@
     display: block;
 }
 
-.jackett-version a {
+.jackettVersion a {
     color: rgba(255, 255, 255, 0.65);
 }

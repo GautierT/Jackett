@@ -5,10 +5,10 @@ import {Layout} from 'antd';
 import {ServerConfig} from "../api/configuration";
 import Sidebar from "./Sidebar";
 import Indexers from "../pages/Indexers";
-import AddIndexer from "../pages/AddIndexer";
+import AddIndexer from "../pages/IndexersAddIndexer";
 import Search from "../pages/Search";
 import Configuration from "../pages/Configuration";
-import Security from "../pages/Security";
+import Security from "../pages/ConfigurationSecurity";
 
 export default function AppLayout() {
     // TODO: remove the hack serverConfig={{} as ServerConfig}

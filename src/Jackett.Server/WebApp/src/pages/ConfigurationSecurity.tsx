@@ -10,7 +10,7 @@ import {CopyOutlined} from "@ant-design/icons/lib";
 import {updateAdminPassword} from "../store/thunks/serverConfig";
 import {RootState} from "../store/reducers";
 import {ServerConfig} from "../api/configuration";
-import "./Configuration.css";
+import styles from "./Configuration.module.css";
 
 interface State {
     fromChanged: boolean
@@ -36,7 +36,7 @@ const mapDispatchToProps = {
     updateAdminPassword: ((adminPassword: string) => updateAdminPassword(adminPassword))
 }
 
-class Security extends React.Component<Props, State> {
+class ConfigurationSecurity extends React.Component<Props, State> {
     formRef = React.createRef<FormInstance>();
     waitingForUpdate = false;
 
@@ -98,14 +98,15 @@ class Security extends React.Component<Props, State> {
     render() {
         return (
             <Card title="Security configuration" style={{ width: "100%" }}>
-                <div className="config-body">
-                    <h3 className="config-title">Admin password</h3>
+                <div className={styles.configBody}>
+                    <h3 className={styles.configTitle}>Admin password</h3>
                     <Form
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 10 }}
                         layout="horizontal"
                         onFinish={this.handleSubmit}
                         onValuesChange={this.onValuesChange}
+                        className={styles.formCustom}
                         ref={this.formRef}
                         initialValues={{
                             enableAdminPasword: this.state.enablePassword
@@ -114,7 +115,7 @@ class Security extends React.Component<Props, State> {
                         <Form.Item label="Enable admin password" name="enableAdminPasword" valuePropName="checked">
                             <Switch />
                         </Form.Item>
-                        <Form.Item label="Change admin password" name="adminPassword" rules={[{ validator: this.checkAdminPassword }]}>
+                        <Form.Item label="Admin password" name="adminPassword" rules={[{ validator: this.checkAdminPassword }]}>
                             <Input.Password disabled={!this.state.enablePassword}/>
                         </Form.Item>
                         <Form.Item wrapperCol={{ span: 10, offset: 8 }}>
@@ -123,7 +124,7 @@ class Security extends React.Component<Props, State> {
                             </Button>
                         </Form.Item>
                     </Form>
-                    <h3 className="config-title">API key</h3>
+                    <h3 className={styles.configTitle}>API key</h3>
                     <Row>
                         <Col span={8} className="ant-form-item-label">
                             <label>Jackett API key</label>
@@ -151,4 +152,4 @@ class Security extends React.Component<Props, State> {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Security);
+export default connect(mapStateToProps, mapDispatchToProps)(ConfigurationSecurity);

@@ -6,7 +6,7 @@ import Alert from "antd/lib/alert";
 
 import {doLogin} from "../api/login";
 import JackettLogo from "../assets/jackett_logo.png";
-import "./Login.css"
+import style from "./Login.module.css"
 
 interface State {
     isLoading: boolean
@@ -46,39 +46,39 @@ class Login extends React.Component<{}, State> {
 
     render() {
         return (
-            <div className="login-center-screen">
-                <div className="login-jackett-logo">
+            <div className={style.centerScreen}>
+                <div className={style.jackettLogo}>
                     <img src={JackettLogo} alt="Jackett logo"/>
                     <span>Jackett</span>
                 </div>
                 <Form
                     name="normal_login"
-                    className="login-form-custom"
+                    className={style.formCustom}
                     initialValues={{
                         username: "Admin"
                     }}
                     onFinish={this.handleSubmit}
                 >
-                    {this.state.isLoginWrong && <Alert message="The password is incorrect!" type="error" showIcon className="login-alert" />}
-                    {this.state.isLoginError && <Alert message="Unknown error. Please, reload the page." type="error" showIcon className="login-alert" />}
+                    {this.state.isLoginWrong && <Alert message="The password is incorrect!" type="error" showIcon className={style.alert} />}
+                    {this.state.isLoginError && <Alert message="Unknown error. Please, reload the page." type="error" showIcon className={style.alert} />}
                     <Form.Item
                         name="username"
                         rules={[{ required: true, message: 'Please input your Username!' }]}
                     >
-                        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" disabled />
+                        <Input prefix={<UserOutlined />} placeholder="Username" disabled />
                     </Form.Item>
                     <Form.Item
                         name="password"
                         rules={[{ required: true, message: 'Please input your Password!' }]}
                     >
                         <Input
-                            prefix={<LockOutlined className="site-form-item-icon" />}
+                            prefix={<LockOutlined />}
                             type="password"
                             placeholder="Password"
                         />
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" loading={this.state.isLoading} className="login-button-custom">
+                        <Button type="primary" htmlType="submit" loading={this.state.isLoading} className={style.buttonCustom}>
                             Log in
                         </Button>
                     </Form.Item>

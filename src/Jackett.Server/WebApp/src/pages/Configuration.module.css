@@ -1,0 +1,12 @@
+.configBody {
+    width: 50%;
+    min-width: 600px;
+}
+
+.configTitle {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.formCustom div[class="ant-row ant-form-item"] {
+    margin-bottom: 10px !important;
+}
