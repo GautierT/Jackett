@@ -13,7 +13,7 @@ export interface ServerConfig {
     notices: Array<string>
     omdbkey: string
     omdburl: string
-    password: string
+    password: string // this is not the real password
     port: number
     prerelease: boolean
     proxy_password: string
@@ -54,5 +54,16 @@ export function postServerConfig(updateConfig: UpdateServerConfig): Promise<Axio
         url: "/api/v2.0/server/config",
         method: "POST",
         data: updateConfig
+    });
+}
+
+export function postAdminPassword(adminPassword: string): Promise<AxiosResponse<void>> {
+    return http.request<void>({
+        url: "/api/v2.0/server/adminpassword",
+        method: "POST",
+        data: adminPassword,
+        headers: {
+            'Content-Type': 'application/json'
+        }
     });
 }

@@ -20,6 +20,9 @@ export const FETCH_CONFIG_ERROR = 'FETCH_CONFIG_ERROR';
 export const UPDATE_CONFIG_PENDING = 'UPDATE_CONFIG_PENDING';
 export const UPDATE_CONFIG_SUCCESS = 'UPDATE_CONFIG_SUCCESS';
 export const UPDATE_CONFIG_ERROR = 'UPDATE_CONFIG_ERROR';
+export const UPDATE_ADMIN_PASSWORD_PENDING = 'UPDATE_ADMIN_PASSWORD_PENDING';
+export const UPDATE_ADMIN_PASSWORD_SUCCESS = 'UPDATE_ADMIN_PASSWORD_SUCCESS';
+export const UPDATE_ADMIN_PASSWORD_ERROR = 'UPDATE_ADMIN_PASSWORD_ERROR';
 
 interface FetchConfigPendingAction {
     type: typeof FETCH_CONFIG_PENDING
@@ -49,5 +52,20 @@ interface UpdateConfigErrorAction {
     errorUpdate: string
 }
 
+interface UpdateAdminPasswordPendingAction {
+    type: typeof UPDATE_ADMIN_PASSWORD_PENDING
+}
+
+interface UpdateAdminPasswordSuccessAction {
+    type: typeof UPDATE_ADMIN_PASSWORD_SUCCESS
+    adminPassword: string
+}
+
+interface UpdateAdminPasswordErrorAction {
+    type: typeof UPDATE_ADMIN_PASSWORD_ERROR
+    errorUpdate: string
+}
+
 export type ServerConfigActionTypes = FetchConfigPendingAction | FetchConfigSuccessAction | FetchConfigErrorAction |
-    UpdateConfigPendingAction | UpdateConfigSuccessAction | UpdateConfigErrorAction
+    UpdateConfigPendingAction | UpdateConfigSuccessAction | UpdateConfigErrorAction |
+    UpdateAdminPasswordPendingAction | UpdateAdminPasswordSuccessAction | UpdateAdminPasswordErrorAction

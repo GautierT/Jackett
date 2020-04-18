@@ -4,10 +4,11 @@ import {Layout} from 'antd';
 
 import {ServerConfig} from "../api/configuration";
 import Sidebar from "./Sidebar";
+import Indexers from "../pages/Indexers";
+import AddIndexer from "../pages/AddIndexer";
 import Search from "../pages/Search";
 import Configuration from "../pages/Configuration";
-import AddIndexer from "../pages/AddIndexer";
-import Indexers from "../pages/Indexers";
+import Security from "../pages/Security";
 
 export default function AppLayout() {
     // TODO: remove the hack serverConfig={{} as ServerConfig}
@@ -18,9 +19,10 @@ export default function AppLayout() {
                 <Layout className="site-layout">
                     <Layout.Content style={{ margin: '16px' }}>
                         <Switch>
+                            <Route path="/addindexer" component={AddIndexer}/>
                             <Route path="/search" component={Search}/>
                             <Route path="/configuration" component={Configuration}/>
-                            <Route path="/addindexer" component={AddIndexer}/>
+                            <Route path="/security" component={Security}/>
                             <Route path="/" component={Indexers}/>
                         </Switch>
                     </Layout.Content>

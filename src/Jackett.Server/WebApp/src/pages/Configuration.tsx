@@ -12,7 +12,7 @@ interface Props {
     config: ServerConfig
     isUpdating: boolean
     errorUpdate: string
-    updateServerConfig: (config: UpdateServerConfig) => void
+    updateServerConfig: ((config: UpdateServerConfig) => void)
 }
 
 function mapStateToProps(state: RootState) {
@@ -24,7 +24,7 @@ function mapStateToProps(state: RootState) {
 }
 
 const mapDispatchToProps = {
-    updateServerConfig: (config: UpdateServerConfig) => updateServerConfig(config)
+    updateServerConfig: ((config: UpdateServerConfig) => updateServerConfig(config))
 }
 
 class Configuration extends React.Component<Props, {}> {
@@ -33,7 +33,7 @@ class Configuration extends React.Component<Props, {}> {
         "1": "SOCKS4",
         "2": "SOCKS5"
     };
-    checkUpdate = false;
+    waitingForUpdate = false;
 
     constructor (props: Props) {
         super(props);
@@ -51,7 +51,7 @@ class Configuration extends React.Component<Props, {}> {
 
     handleSubmit(values: Store) {
         notification.destroy();
-        this.checkUpdate = true;
+        this.waitingForUpdate = true;
 
         const serverConfig: UpdateServerConfig = {
             basepathoverride: values.basePathOverride,
@@ -76,18 +76,16 @@ class Configuration extends React.Component<Props, {}> {
         if (this.props.errorUpdate) {
             notification.error({
                 message: "Error updating the configuration",
-                description:this.props.errorUpdate,
+                description: this.props.errorUpdate,
                 placement: "bottomLeft",
                 duration: 0
             });
-        }
-
-        if (this.checkUpdate && !this.props.isUpdating && !this.props.errorUpdate) {
+        } else if (this.waitingForUpdate && !this.props.isUpdating) {
             notification.success({
                 message: "Configuration updated",
                 placement: "bottomLeft"
             });
-            this.checkUpdate = false;
+            this.waitingForUpdate = false;
         }
 
         return (
@@ -149,7 +147,7 @@ class Configuration extends React.Component<Props, {}> {
                         </Select>
                     </Form.Item>
                     <Form.Item label="Proxy URL" name="proxyURL">
-                        <Input placeholder="Blank for disable"/>
+                        <Input placeholder="Blank to disable"/>
                     </Form.Item>
                     <Form.Item label="Proxy port" name="proxyPort">
                         <InputNumber/>
@@ -168,7 +166,7 @@ class Configuration extends React.Component<Props, {}> {
                     <Form.Item label="OMDB API key" name="omdbKey">
                         <Input />
                     </Form.Item>
-                    <Form.Item label="&nbsp;">
+                    <Form.Item wrapperCol={{ span: 10, offset: 8 }}>
                         <Button type="primary" htmlType="submit" disabled={this.props.isUpdating}>
                             Save
                         </Button>

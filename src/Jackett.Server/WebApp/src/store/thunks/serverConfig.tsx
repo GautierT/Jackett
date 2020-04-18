@@ -1,9 +1,16 @@
 import {Dispatch} from "redux";
 import {
-    fetchConfigError, fetchConfigPending, fetchConfigSuccess,
-    updateConfigError, updateConfigPending, updateConfigSuccess
+    fetchConfigError,
+    fetchConfigPending,
+    fetchConfigSuccess,
+    updateConfigError,
+    updateConfigPending,
+    updateConfigSuccess,
+    updateAdminPasswordError,
+    updateAdminPasswordPending,
+    updateAdminPasswordSuccess
 } from "../actions/serverConfig";
-import {getServerConfig, postServerConfig, UpdateServerConfig} from "../../api/configuration";
+import {getServerConfig, postAdminPassword, postServerConfig, UpdateServerConfig} from "../../api/configuration";
 
 //
 // Thunks
@@ -40,3 +47,20 @@ export function updateServerConfig(updateConfig: UpdateServerConfig) {
     }
 }
 
+export function updateAdminPassword(adminPassword: string) {
+    return (dispatch: Dispatch) => {
+        dispatch(updateAdminPasswordPending());
+
+        // save a fake password in memory for security
+        const fakePassword = adminPassword ? "fake_pass" : "";
+
+        postAdminPassword(adminPassword)
+            .then(() => {
+                dispatch(updateAdminPasswordSuccess(fakePassword));
+            })
+            .catch(error => {
+                const errorUpdate = error.response.data.error || error.message;
+                dispatch(updateAdminPasswordError(errorUpdate));
+            });
+    }
+}

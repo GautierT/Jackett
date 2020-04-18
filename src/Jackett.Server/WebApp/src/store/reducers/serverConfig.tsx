@@ -1,7 +1,8 @@
 import {
     ServerConfigActionTypes, ServerConfigState,
     FETCH_CONFIG_ERROR, FETCH_CONFIG_PENDING, FETCH_CONFIG_SUCCESS,
-    UPDATE_CONFIG_PENDING, UPDATE_CONFIG_SUCCESS, UPDATE_CONFIG_ERROR
+    UPDATE_CONFIG_PENDING, UPDATE_CONFIG_SUCCESS, UPDATE_CONFIG_ERROR,
+    UPDATE_ADMIN_PASSWORD_PENDING, UPDATE_ADMIN_PASSWORD_SUCCESS, UPDATE_ADMIN_PASSWORD_ERROR
 } from "../types/serverConfig";
 import {ServerConfig} from "../../api/configuration";
 
@@ -52,6 +53,25 @@ export default function configReducer(state = initialState, action: ServerConfig
                 config: {...state.config, ...action.updateConfig}
             }
         case UPDATE_CONFIG_ERROR:
+            return {
+                ...state,
+                isUpdating: false,
+                errorUpdate: action.errorUpdate
+            }
+        case UPDATE_ADMIN_PASSWORD_PENDING:
+            return {
+                ...state,
+                isUpdating: true,
+                errorUpdate: "",
+            }
+        case UPDATE_ADMIN_PASSWORD_SUCCESS:
+            return {
+                ...state,
+                isUpdating: false,
+                errorUpdate: "",
+                config: {...state.config, password: action.adminPassword}
+            }
+        case UPDATE_ADMIN_PASSWORD_ERROR:
             return {
                 ...state,
                 isUpdating: false,
