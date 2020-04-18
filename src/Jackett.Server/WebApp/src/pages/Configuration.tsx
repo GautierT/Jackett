@@ -45,7 +45,6 @@ class Configuration extends React.Component<Props, {}> {
     }
 
     handleSubmit = (values: Store) => {
-        notification.destroy();
         this.waitingForUpdate = true;
 
         const serverConfig: UpdateServerConfig = {
@@ -72,13 +71,13 @@ class Configuration extends React.Component<Props, {}> {
             notification.error({
                 message: "Error updating the configuration",
                 description: this.props.errorUpdate,
-                placement: "bottomLeft",
+                placement: "bottomRight",
                 duration: 0
             });
         } else if (this.waitingForUpdate && !this.props.isUpdating) {
             notification.success({
                 message: "Configuration updated",
-                placement: "bottomLeft"
+                placement: "bottomRight"
             });
             this.waitingForUpdate = false;
         }

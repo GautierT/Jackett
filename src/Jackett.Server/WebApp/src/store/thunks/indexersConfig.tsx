@@ -1,6 +1,9 @@
 import {Dispatch} from "redux";
-import {fetchIndexersError, fetchIndexersPending, fetchIndexersSuccess} from "../actions/indexersConfig";
-import {getIndexers, IndexerConfig} from "../../api/indexers";
+import {
+    fetchIndexersPending, fetchIndexersSuccess,fetchIndexersError,
+    addIndexerPending, addIndexerSuccess, addIndexerError
+} from "../actions/indexersConfig";
+import {getIndexers, postIndexerConfig, IndexerConfig, IndexerConfigFields} from "../../api/indexers";
 
 //
 // Thunks
@@ -26,6 +29,21 @@ export function fetchIndexersConfig() {
                 // TODO: show the error
                 console.log(error);
                 dispatch(fetchIndexersError("Error fetching indexers API!"));
+            });
+    }
+}
+
+export function addIndexerConfig(id: string, indexerConfigFields: IndexerConfigFields) {
+    return (dispatch: Dispatch) => {
+        dispatch(addIndexerPending());
+
+        postIndexerConfig(id, indexerConfigFields)
+            .then(response => {
+                dispatch(addIndexerSuccess(id));
+            })
+            .catch(error => {
+                const errorUpdate = error.response.data.error || error.message;
+                dispatch(addIndexerError(errorUpdate));
             });
     }
 }

@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons/lib";
 
 import JackettLogo from "../assets/jackett_logo.png";
-import style from "./Sidebar.module.css";
+import styles from "./Sidebar.module.css";
 
 interface SidebarSubMenu {
     label: string
@@ -179,7 +179,7 @@ class Sidebar extends React.Component<Props, State> {
     render() {
         return (
             <Layout.Sider width={230}>
-                <div className={style.jackettLogo}>
+                <div className={styles.jackettLogo}>
                     <img src={JackettLogo} alt="Jackett logo"/>
                     <span>Jackett</span>
                 </div>
@@ -216,7 +216,7 @@ class Sidebar extends React.Component<Props, State> {
                     })}
 
                     <li>
-                        <div className={style.jackettVersion}>
+                        <div className={styles.jackettVersion}>
                             <a href="https://github.com/Jackett/Jackett" target="_blank" rel="noopener noreferrer">
                                 Version {this.props.jackettVersion}
                             </a>

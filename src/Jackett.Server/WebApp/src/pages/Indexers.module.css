@@ -1,0 +1,22 @@
+.actions {
+    width: 75px;
+    min-width: 75px;
+    white-space: nowrap;
+    display: block;
+}
+
+.actions span {
+    cursor: pointer;
+    margin-right: 1px !important;
+    font-size: 14px!important;
+    line-height: 18px!important;
+}
+
+.tableCustom div[class="ant-table-content"] td {
+    padding: 5px 10px;
+}
+
+.tableCustom span[class*="ant-tag"] {
+    font-size: 11px;
+    line-height: 18px;
+}

@@ -49,7 +49,6 @@ class ConfigurationSecurity extends React.Component<Props, State> {
     }
 
     handleSubmit = (values: Store) => {
-        notification.destroy();
         this.waitingForUpdate = true;
 
         const adminPassword: string = values.enableAdminPasword ? values.adminPassword : "";
@@ -78,13 +77,13 @@ class ConfigurationSecurity extends React.Component<Props, State> {
             notification.error({
                 message: "Error updating the configuration",
                 description: this.props.errorUpdate,
-                placement: "bottomLeft",
+                placement: "bottomRight",
                 duration: 0
             });
         } else if (this.waitingForUpdate && !this.props.isUpdating) {
             notification.success({
                 message: "Configuration updated",
-                placement: "bottomLeft"
+                placement: "bottomRight"
             });
             this.waitingForUpdate = false;
             this.setState({fromChanged: false});
@@ -138,7 +137,7 @@ class ConfigurationSecurity extends React.Component<Props, State> {
                                     <CopyToClipboard text={this.props.config.api_key}
                                                      onCopy={() => notification.success({
                                                          message: "Copied to clipboard!",
-                                                         placement: "bottomLeft"
+                                                         placement: "bottomRight"
                                                      })}>
                                         <Button type="primary"><CopyOutlined /></Button>
                                     </CopyToClipboard>

@@ -35,7 +35,7 @@ class AppLayout extends React.Component<Props, {}> {
                         and your configuration will carry over.<br/>Benefits include: increased performance, improved
                         stability and no dependency on Mono.
                     </span>),
-                placement: "bottomLeft",
+                placement: "bottomRight",
                 duration: 0
             });
         }
@@ -43,7 +43,7 @@ class AppLayout extends React.Component<Props, {}> {
             this.props.serverConfig.notices.forEach(notice => {
                 notification.error({
                     message: notice,
-                    placement: "bottomLeft",
+                    placement: "bottomRight",
                     duration: 0
                 })
             });

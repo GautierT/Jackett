@@ -15,7 +15,7 @@ import {jackettTimespan} from "../utils";
 import MagnetIcon from "../assets/magnet.svg";
 import DownloadIcon from "../assets/download.svg";
 import UploadIcon from "../assets/upload.svg";
-import style from "./Search.module.css";
+import styles from "./Search.module.css";
 
 // TODO: add props & state
 interface State {
@@ -102,7 +102,7 @@ class Search extends React.Component<Props, State> {
         let blackHole = record.BlackholeLink ? <a href={record.BlackholeLink}><img src={UploadIcon} alt="Save in Blackhole directory"/></a> : '';
 
         return (
-            <span className={style.downloadIcons}>{torrent} {magnet} {blackHole}</span>
+            <span className={styles.downloadIcons}>{torrent} {magnet} {blackHole}</span>
         );
     }
 
@@ -246,7 +246,7 @@ class Search extends React.Component<Props, State> {
                 <div>
                     <Form
                         layout="inline"
-                        className={style.formCustom}
+                        className={styles.formCustom}
                         onFinish={this.handleSubmit}
                         ref={this.formRef}
                     >
@@ -281,7 +281,7 @@ class Search extends React.Component<Props, State> {
                     columns={columns}
                     rowKey="Guid"
                     size="small"
-                    className={style.tableCustom}
+                    className={styles.tableCustom}
                     pagination={{position:["bottomLeft"]}}
                     showSorterTooltip={false}
                     loading={this.state.isLoading}
