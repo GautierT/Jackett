@@ -1,8 +1,11 @@
 import React from 'react';
 import {connect} from "react-redux";
+import CopyToClipboard from 'react-copy-to-clipboard';
 import {Store} from 'rc-field-form/lib/interface.d'
 import {Button, Card, Form, Input, notification, Switch} from 'antd';
 import {FormInstance} from "antd/lib/form";
+import {Col, Row} from "antd/lib/grid";
+import {CopyOutlined} from "@ant-design/icons/lib";
 
 import {updateAdminPassword} from "../store/thunks/serverConfig";
 import {RootState} from "../store/reducers";
@@ -43,10 +46,9 @@ class Security extends React.Component<Props, State> {
             fromChanged: false,
             enablePassword: !!this.props.config.password
         }
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleSubmit(values: Store) {
+    handleSubmit = (values: Store) => {
         notification.destroy();
         this.waitingForUpdate = true;
 
@@ -59,10 +61,6 @@ class Security extends React.Component<Props, State> {
             fromChanged: true,
             enablePassword: values.enableAdminPasword
         });
-        const form = this.formRef.current;
-        if (form) {
-            form.validateFields();
-        }
     };
 
     checkAdminPassword = (rule: any, value: any) => {
@@ -75,7 +73,7 @@ class Security extends React.Component<Props, State> {
         return Promise.resolve();
     };
 
-    render() {
+    componentDidUpdate() {
         if (this.props.errorUpdate) {
             notification.error({
                 message: "Error updating the configuration",
@@ -91,40 +89,63 @@ class Security extends React.Component<Props, State> {
             this.waitingForUpdate = false;
             this.setState({fromChanged: false});
         }
+        const form = this.formRef.current;
+        if (form) {
+            form.validateFields();
+        }
+    }
 
+    render() {
         return (
             <Card title="Security configuration" style={{ width: "100%" }}>
-                <Form
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 10 }}
-                    layout="horizontal"
-                    className="config-form"
-                    onFinish={this.handleSubmit}
-                    onValuesChange={this.onValuesChange}
-                    ref={this.formRef}
-                    initialValues={{
-                        enableAdminPasword: this.state.enablePassword,
-                        apiKey: this.props.config.api_key
-                    }}
-                >
+                <div className="config-body">
                     <h3 className="config-title">Admin password</h3>
-                    <Form.Item label="Enable admin password" name="enableAdminPasword">
-                        <Switch defaultChecked={this.state.enablePassword}/>
-                    </Form.Item>
-                    <Form.Item label="Change admin password" name="adminPassword" rules={[{ validator: this.checkAdminPassword }]}>
-                        <Input.Password disabled={!this.state.enablePassword}/>
-                    </Form.Item>
-                    <Form.Item wrapperCol={{ span: 10, offset: 8 }}>
-                        <Button type="primary" htmlType="submit" disabled={!this.state.fromChanged || this.props.isUpdating}>
-                            Save
-                        </Button>
-                    </Form.Item>
-
+                    <Form
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 10 }}
+                        layout="horizontal"
+                        onFinish={this.handleSubmit}
+                        onValuesChange={this.onValuesChange}
+                        ref={this.formRef}
+                        initialValues={{
+                            enableAdminPasword: this.state.enablePassword
+                        }}
+                    >
+                        <Form.Item label="Enable admin password" name="enableAdminPasword" valuePropName="checked">
+                            <Switch />
+                        </Form.Item>
+                        <Form.Item label="Change admin password" name="adminPassword" rules={[{ validator: this.checkAdminPassword }]}>
+                            <Input.Password disabled={!this.state.enablePassword}/>
+                        </Form.Item>
+                        <Form.Item wrapperCol={{ span: 10, offset: 8 }}>
+                            <Button type="primary" htmlType="submit" disabled={!this.state.fromChanged || this.props.isUpdating}>
+                                Save
+                            </Button>
+                        </Form.Item>
+                    </Form>
                     <h3 className="config-title">API key</h3>
-                    <Form.Item label="Jackett API key" name="apiKey">
-                        <Input disabled/>
-                    </Form.Item>
-                </Form>
+                    <Row>
+                        <Col span={8} className="ant-form-item-label">
+                            <label>Jackett API key</label>
+                        </Col>
+                        <Col span={10}>
+                            <Row>
+                                <Col span={20}>
+                                    <Input disabled defaultValue={this.props.config.api_key}/>
+                                </Col>
+                                <Col span={4}>
+                                    <CopyToClipboard text={this.props.config.api_key}
+                                                     onCopy={() => notification.success({
+                                                         message: "Copied to clipboard!",
+                                                         placement: "bottomLeft"
+                                                     })}>
+                                        <Button type="primary"><CopyOutlined /></Button>
+                                    </CopyToClipboard>
+                                </Col>
+                            </Row>
+                        </Col>
+                    </Row>
+                </div>
             </Card>
         )
     }

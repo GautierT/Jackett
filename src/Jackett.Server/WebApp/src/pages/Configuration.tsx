@@ -35,11 +35,6 @@ class Configuration extends React.Component<Props, {}> {
     };
     waitingForUpdate = false;
 
-    constructor (props: Props) {
-        super(props);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
     proxyTypeToValue(key: number) {
         return this.proxyTypes[key]
     }
@@ -49,7 +44,7 @@ class Configuration extends React.Component<Props, {}> {
         return parseInt(key)
     }
 
-    handleSubmit(values: Store) {
+    handleSubmit = (values: Store) => {
         notification.destroy();
         this.waitingForUpdate = true;
 
@@ -72,7 +67,7 @@ class Configuration extends React.Component<Props, {}> {
         this.props.updateServerConfig(serverConfig);
     }
 
-    render() {
+    componentDidUpdate() {
         if (this.props.errorUpdate) {
             notification.error({
                 message: "Error updating the configuration",
@@ -87,7 +82,9 @@ class Configuration extends React.Component<Props, {}> {
             });
             this.waitingForUpdate = false;
         }
+    }
 
+    render() {
         return (
             <Card title="General configuration" style={{ width: "100%" }}>
                 <Form
@@ -120,29 +117,29 @@ class Configuration extends React.Component<Props, {}> {
                     <Form.Item label="Base Path Override" name="basePathOverride">
                         <Input placeholder="/jackett"/>
                     </Form.Item>
-                    <Form.Item label="External access" name="externalAccess">
-                        <Switch defaultChecked={this.props.config.external}/>
+                    <Form.Item label="External access" name="externalAccess" valuePropName="checked">
+                        <Switch />
                     </Form.Item>
                     <Form.Item label="Manual download Blackhole directory" name="blackholeDir">
                         <Input placeholder="C:\torrents\" />
                     </Form.Item>
-                    <Form.Item label="Enhanced logging" name="enhancedLogging">
-                        <Switch defaultChecked={this.props.config.logging}/>
+                    <Form.Item label="Enhanced logging" name="enhancedLogging" valuePropName="checked">
+                        <Switch />
                     </Form.Item>
 
                     <h3 className="config-title">Updates</h3>
-                    <Form.Item label="Disable auto update" name="updateDisabled">
-                        <Switch defaultChecked={this.props.config.updatedisabled}/>
+                    <Form.Item label="Disable auto update" name="updateDisabled" valuePropName="checked">
+                        <Switch />
                     </Form.Item>
-                    <Form.Item label="Update to pre-release" name="prerelease">
-                        <Switch defaultChecked={this.props.config.prerelease}/>
+                    <Form.Item label="Update to pre-release" name="prerelease" valuePropName="checked">
+                        <Switch />
                     </Form.Item>
 
                     <h3 className="config-title">Proxy</h3>
                     <Form.Item label="Proxy type" name="proxyType">
                         <Select>
                             {Object.values(this.proxyTypes).map((value: any) => (
-                                <Select.Option value={value}>{value}</Select.Option>
+                                <Select.Option key={value} value={value}>{value}</Select.Option>
                             ))}
                         </Select>
                     </Form.Item>

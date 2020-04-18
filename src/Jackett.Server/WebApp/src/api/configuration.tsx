@@ -61,7 +61,7 @@ export function postAdminPassword(adminPassword: string): Promise<AxiosResponse<
     return http.request<void>({
         url: "/api/v2.0/server/adminpassword",
         method: "POST",
-        data: adminPassword,
+        data: `"${adminPassword}"`,
         headers: {
             'Content-Type': 'application/json'
         }
