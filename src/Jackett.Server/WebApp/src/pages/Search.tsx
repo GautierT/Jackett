@@ -63,7 +63,7 @@ class Search extends React.Component<Props, State> {
             });
 
             // perform search
-            if (typeof searchTerm !== 'undefined') {
+            if (typeof searchTerm !== 'undefined' || typeof searchIndexers !== 'undefined' || typeof searchCategories !== 'undefined') {
                 form.submit();
             }
         }
@@ -99,10 +99,10 @@ class Search extends React.Component<Props, State> {
     generateDownloadLinks(record: SearchResult) {
         let torrent = record.Link ? <a href={record.Link}><img src={DownloadIcon} alt="Download torrent"/></a> : '';
         let magnet = record.MagnetUri ? <a href={record.MagnetUri}><img src={MagnetIcon} alt="Download magnet"/></a> : '';
-        let blackhole = record.BlackholeLink ? <a href={record.BlackholeLink}><img src={UploadIcon} alt="Save in Blackhole directory"/></a> : '';
+        let blackHole = record.BlackholeLink ? <a href={record.BlackholeLink}><img src={UploadIcon} alt="Save in Blackhole directory"/></a> : '';
 
         return (
-            <span className={style.downloadIcons}>{torrent} {magnet} {blackhole}</span>
+            <span className={style.downloadIcons}>{torrent} {magnet} {blackHole}</span>
         );
     }
 
@@ -241,8 +241,6 @@ class Search extends React.Component<Props, State> {
             return (<Select.Option key={indexer.id} value={indexer.id}>{indexer.name}</Select.Option>)
         })
 
-
-
         return (
             <Card title="Search" style={{ width: "100%" }}>
                 <div>
@@ -274,7 +272,7 @@ class Search extends React.Component<Props, State> {
                             </Select>
                         </Form.Item>
                         <Form.Item >
-                            <Button type="primary" htmlType="submit" loading={this.state.isLoading}>Search</Button>
+                            <Button type="primary" htmlType="submit" disabled={this.state.isLoading}>Search</Button>
                         </Form.Item>
                     </Form>
                 </div>
