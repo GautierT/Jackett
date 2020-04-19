@@ -4,8 +4,7 @@ import {connect} from "react-redux";
 import {Card, notification, Table, Tag} from "antd";
 import {ColumnsType} from "antd/lib/table/interface";
 import {
-    InfoCircleOutlined,
-    PlusSquareOutlined, SettingOutlined
+    InfoCircleOutlined, PlusCircleOutlined, SettingOutlined
 } from "@ant-design/icons";
 
 import {RootState} from "../store/reducers";
@@ -56,12 +55,6 @@ const mapDispatchToProps = {
 class IndexersAddIndexer extends React.Component<Props, State> {
     tableColumns: ColumnsType<any> = [
         {
-            title: 'Actions',
-            dataIndex: 'id',
-            width: '1px',
-            render: (text:string, record:TableRow) => this.renderColumnActions(record)
-        },
-        {
             title: 'Indexer',
             dataIndex: 'name',
             width: '1px',
@@ -84,6 +77,11 @@ class IndexersAddIndexer extends React.Component<Props, State> {
             dataIndex: 'language',
             width: '1px',
             sorter: (a:TableRow, b:TableRow) => b.language.localeCompare(a.language)
+        },
+        {
+            title: 'Actions',
+            dataIndex: 'id',
+            render: (text:string, record:TableRow) => this.renderColumnActions(record)
         },
         {
             title: 'Categories',
@@ -145,9 +143,9 @@ class IndexersAddIndexer extends React.Component<Props, State> {
     }
 
     renderColumnActions = (record:TableRow): ReactNode => {
-        const capabilitiesButton = <Tag title="Indexer capabilities" onClick={() => this.actionIndexerCapabilities(record.id)}><InfoCircleOutlined /></Tag>;
-        const configureButton = <Tag title="Configure indexer" onClick={() => this.actionConfigureIndexer(record.id)}><SettingOutlined /></Tag>;
-        const addButton = record.type === IndexerType.Public ? <Tag title="Add indexer" onClick={() => this.actionAddIndexer(record.id)}><PlusSquareOutlined /></Tag> : '';
+        const capabilitiesButton = <Tag title="Indexer capabilities" onClick={() => this.actionIndexerCapabilities(record.id)}><InfoCircleOutlined /> Caps</Tag>;
+        const configureButton = <Tag title="Configure indexer" onClick={() => this.actionConfigureIndexer(record.id)}><SettingOutlined /> Config</Tag>;
+        const addButton = record.type === IndexerType.Public ? <Tag title="Add indexer" onClick={() => this.actionAddIndexer(record.id)}><PlusCircleOutlined /> Add</Tag> : '';
         return (
             <div className={styles.actions}>{capabilitiesButton} {configureButton} {addButton}</div>
         );

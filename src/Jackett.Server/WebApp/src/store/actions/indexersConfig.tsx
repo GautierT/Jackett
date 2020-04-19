@@ -30,6 +30,7 @@ export function fetchIndexersError(error: string): IndexersConfigActionTypes {
     }
 }
 
+// TODO: rename all actions, types... to Update Indexer
 export function addIndexerPending(): IndexersConfigActionTypes {
     return {
         type: ADD_INDEXER_PENDING

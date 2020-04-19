@@ -63,7 +63,7 @@ class Search extends React.Component<Props, State> {
             });
 
             // perform search
-            if (typeof searchTerm !== 'undefined' || typeof searchIndexers !== 'undefined' || typeof searchCategories !== 'undefined') {
+            if (typeof searchTerm !== 'undefined') {
                 form.submit();
             }
         }
@@ -89,7 +89,7 @@ class Search extends React.Component<Props, State> {
         // change url params
         this.props.history.push({
             search: qs.stringify({
-                query: values.query,
+                query: values.query || "",  // we always add this parameter (it's checked to perform the search when the page reloads)
                 indexers: values.indexers,
                 cats: values.cats
             }, { arrayFormat: 'brackets' })

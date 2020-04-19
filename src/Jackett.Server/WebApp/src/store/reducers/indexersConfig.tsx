@@ -47,15 +47,21 @@ export default function indexersReducer(state = initialState, action: IndexersCo
                 errorUpdate: ""
             }
         case ADD_INDEXER_SUCCESS:
-            let indexerConfig = state.unConfiguredIndexers
-                .filter(indexer => indexer.id === action.id)[0];
-            indexerConfig.configured = true;
+            let configuredIndexers: Array<IndexerConfig> = state.configuredIndexers;
+            let unConfiguredIndexers: Array<IndexerConfig> = state.unConfiguredIndexers;
 
-            let configuredIndexers: Array<IndexerConfig> = state.configuredIndexers.slice();
-            configuredIndexers.push(indexerConfig);
+            // if the indexer is updated we don't do anything
+            const findIndexer = state.unConfiguredIndexers
+                .filter(indexer => indexer.id === action.id);
+            if (findIndexer.length > 0) {
+                let indexerConfig = findIndexer[0];
+                indexerConfig.configured = true;
 
-            let unConfiguredIndexers: Array<IndexerConfig> = state.unConfiguredIndexers
-                .filter(indexer => indexer.id !== action.id);
+                configuredIndexers = configuredIndexers.slice();
+                configuredIndexers.push(indexerConfig);
+
+                unConfiguredIndexers = unConfiguredIndexers.filter(indexer => indexer.id !== action.id);
+            }
 
             return {
                 ...state,
