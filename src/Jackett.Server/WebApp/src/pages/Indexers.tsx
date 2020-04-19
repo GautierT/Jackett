@@ -12,7 +12,7 @@ import {RootState} from "../store/reducers";
 import {getIndexerConfig, IndexerConfig, IndexerConfigFields, IndexerType} from "../api/indexers";
 import IndexerConfiguration from "../components/IndexerConfiguration";
 import IndexerCapabilities from "../components/IndexerCapabilities";
-import {addIndexerConfig} from "../store/thunks/indexersConfig";
+import {updateIndexerConfig, deleteIndexerConfig} from "../store/thunks/indexersConfig";
 import styles from "./Indexers.module.css";
 import CopyToClipboard from "react-copy-to-clipboard";
 import {ServerConfig} from "../api/configuration";
@@ -34,7 +34,8 @@ interface Props extends RouteComponentProps {
     configuredIndexers: Array<IndexerConfig>
     isUpdating: boolean
     errorUpdate: string
-    addIndexerConfig: ((id: string, indexerConfigFields: IndexerConfigFields) => void)
+    updateIndexerConfig: ((id: string, indexerConfigFields: IndexerConfigFields) => void)
+    deleteIndexerConfig: ((id: string) => void)
 }
 
 function mapStateToProps(state: RootState) {
@@ -47,7 +48,8 @@ function mapStateToProps(state: RootState) {
 }
 
 const mapDispatchToProps = {
-    addIndexerConfig: ((id: string, indexerConfigFields: IndexerConfigFields) => addIndexerConfig(id, indexerConfigFields))
+    updateIndexerConfig: ((id: string, indexerConfigFields: IndexerConfigFields) => updateIndexerConfig(id, indexerConfigFields)),
+    deleteIndexerConfig: ((id: string) => deleteIndexerConfig(id))
 }
 
 class Indexers extends React.Component<Props, State> {
@@ -89,6 +91,7 @@ class Indexers extends React.Component<Props, State> {
         }
     ];
     waitingForUpdate = false;
+    waitingForDelete = false;
 
     constructor(props: Props) {
         super(props);
@@ -118,10 +121,10 @@ class Indexers extends React.Component<Props, State> {
                                            onClick={() => this.actionIndexerCapabilities(record.id)}>Caps</Button>;
         const configureButton = <Button title="Configure indexer" icon={<SettingOutlined />} size="small" className={styles.actionButtonBlue}
                                         onClick={() => this.actionConfigureIndexer(record.id)}>Config</Button>;
-        const removeButton = <Button title="Remove indexer" icon={<DeleteOutlined />} size="small" className={styles.actionButtonRed}
-                                     onClick={() => this.actionConfigureIndexer(record.id)}>Remove</Button>;
+        const deleteButton = <Button title="Delete indexer" icon={<DeleteOutlined />} size="small" className={styles.actionButtonRed}
+                                     onClick={() => this.actionDeleteIndexer(record.id)}>Delete</Button>;
         return (
-            <div className={styles.actions}>{searchButton} {capabilitiesButton} {configureButton} {removeButton}</div>
+            <div className={styles.actions}>{searchButton} {capabilitiesButton} {configureButton} {deleteButton}</div>
         );
     }
 
@@ -185,6 +188,11 @@ class Indexers extends React.Component<Props, State> {
         });
     }
 
+    actionDeleteIndexer = (id: string) => {
+        this.waitingForDelete = true;
+        this.props.deleteIndexerConfig(id);
+    }
+
     actionConfigureIndexer = (id: string) => {
         this.setState({isLoadingModal: true});
 
@@ -204,9 +212,6 @@ class Indexers extends React.Component<Props, State> {
                         />
                     )
                 });
-
-                // this.waitingForUpdate = true;
-                // this.props.addIndexerConfig(id, response.data);
             })
             .catch(error => {
                 // TODO: show the error
@@ -219,7 +224,7 @@ class Indexers extends React.Component<Props, State> {
 
     onConfigModalConfigured = (indexerConfig: IndexerConfig, configFields: IndexerConfigFields): void => {
         this.waitingForUpdate = true;
-        this.props.addIndexerConfig(indexerConfig.id, configFields);
+        this.props.updateIndexerConfig(indexerConfig.id, configFields);
     }
 
     onConfigModalCancel = (): void => {
@@ -246,21 +251,23 @@ class Indexers extends React.Component<Props, State> {
 
     componentDidUpdate() {
         // TODO: do this logic in other components
-        if (this.waitingForUpdate) {
+        if (this.waitingForUpdate || this.waitingForDelete) {
             if (this.props.errorUpdate) {
                 notification.error({
-                    message: "Error updating the indexer",
+                    message: this.waitingForUpdate ? "Error updating the indexer" : "Error deleting the indexer",
                     description: this.props.errorUpdate,
                     placement: "bottomRight",
                     duration: 0
                 });
                 this.waitingForUpdate = false;
+                this.waitingForDelete = false;
             } else if (!this.props.isUpdating) {
                 notification.success({
-                    message: "Indexer updated",
+                    message: this.waitingForUpdate ? "Indexer updated" : "Indexer deleted",
                     placement: "bottomRight"
                 });
                 this.waitingForUpdate = false;
+                this.waitingForDelete = false;
                 this.setState({
                     modalComponent: null
                 });

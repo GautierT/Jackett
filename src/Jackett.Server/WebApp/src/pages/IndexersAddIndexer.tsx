@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 
 import {RootState} from "../store/reducers";
-import {addIndexerConfig} from "../store/thunks/indexersConfig";
+import {updateIndexerConfig} from "../store/thunks/indexersConfig";
 import {
     getIndexerConfig,
     IndexerCaps, IndexerConfig, IndexerConfigFields, IndexerType
@@ -37,7 +37,7 @@ interface Props {
     unConfiguredIndexers: Array<IndexerConfig>
     isUpdating: boolean
     errorUpdate: string
-    addIndexerConfig: ((id: string, indexerConfigFields: IndexerConfigFields) => void)
+    updateIndexerConfig: ((id: string, indexerConfigFields: IndexerConfigFields) => void)
 }
 
 function mapStateToProps(state: RootState) {
@@ -49,7 +49,7 @@ function mapStateToProps(state: RootState) {
 }
 
 const mapDispatchToProps = {
-    addIndexerConfig: ((id: string, indexerConfigFields: IndexerConfigFields) => addIndexerConfig(id, indexerConfigFields))
+    updateIndexerConfig: ((id: string, indexerConfigFields: IndexerConfigFields) => updateIndexerConfig(id, indexerConfigFields))
 }
 
 class IndexersAddIndexer extends React.Component<Props, State> {
@@ -167,7 +167,7 @@ class IndexersAddIndexer extends React.Component<Props, State> {
         getIndexerConfig(id)
             .then(response => {
                 this.waitingForUpdate = true;
-                this.props.addIndexerConfig(id, response.data);
+                this.props.updateIndexerConfig(id, response.data);
             })
             .catch(error => {
                 // TODO: show the error
@@ -197,9 +197,6 @@ class IndexersAddIndexer extends React.Component<Props, State> {
                         />
                    )
                 });
-
-                // this.waitingForUpdate = true;
-                // this.props.addIndexerConfig(id, response.data);
             })
             .catch(error => {
                 // TODO: show the error
@@ -212,7 +209,7 @@ class IndexersAddIndexer extends React.Component<Props, State> {
 
     onConfigModalConfigured = (indexerConfig: IndexerConfig, configFields: IndexerConfigFields): void => {
         this.waitingForUpdate = true;
-        this.props.addIndexerConfig(indexerConfig.id, configFields);
+        this.props.updateIndexerConfig(indexerConfig.id, configFields);
     }
 
     onConfigModalCancel = (): void => {

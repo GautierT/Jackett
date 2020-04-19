@@ -29,14 +29,6 @@ export interface IndexerConfig {
 
 export interface IndexersResponse extends Array<IndexerConfig> {}
 
-export function getIndexers()
-    : Promise<AxiosResponse<IndexersResponse>> {
-    return http.request<IndexersResponse>({
-        url: "/api/v2.0/indexers",
-        method: "GET"
-    });
-}
-
 export enum ConfigFieldType {
     InputString = "inputstring",
     InputBool = "inputbool",
@@ -58,6 +50,14 @@ export interface IndexerConfigField {
 
 export interface IndexerConfigFields extends Array<IndexerConfigField> {}
 
+export function getIndexers()
+    : Promise<AxiosResponse<IndexersResponse>> {
+    return http.request<IndexersResponse>({
+        url: "/api/v2.0/indexers",
+        method: "GET"
+    });
+}
+
 export function getIndexerConfig(id: string)
     : Promise<AxiosResponse<IndexerConfigFields>> {
     return http.request<IndexerConfigFields>({
@@ -71,5 +71,12 @@ export function postIndexerConfig(id: string, indexerConfigFields: IndexerConfig
         url: `/api/v2.0/indexers/${id}/config`,
         method: "POST",
         data: indexerConfigFields
+    });
+}
+
+export function deleteIndexer(id: string) {
+    return http.request({
+        url: `/api/v2.0/indexers/${id}`,
+        method: "DELETE"
     });
 }

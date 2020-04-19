@@ -20,9 +20,13 @@ export const FETCH_INDEXERS_PENDING = 'FETCH_INDEXERS_PENDING';
 export const FETCH_INDEXERS_SUCCESS = 'FETCH_INDEXERS_SUCCESS';
 export const FETCH_INDEXERS_ERROR = 'FETCH_INDEXERS_ERROR';
 
-export const ADD_INDEXER_PENDING = 'ADD_INDEXER_PENDING';
-export const ADD_INDEXER_SUCCESS = 'ADD_INDEXER_SUCCESS';
-export const ADD_INDEXER_ERROR = 'ADD_INDEXER_ERROR';
+export const UPDATE_INDEXER_PENDING = 'UPDATE_INDEXER_PENDING';
+export const UPDATE_INDEXER_SUCCESS = 'UPDATE_INDEXER_SUCCESS';
+export const UPDATE_INDEXER_ERROR = 'UPDATE_INDEXER_ERROR';
+
+export const DELETE_INDEXER_PENDING = 'DELETE_INDEXER_PENDING';
+export const DELETE_INDEXER_SUCCESS = 'DELETE_INDEXER_SUCCESS';
+export const DELETE_INDEXER_ERROR = 'DELETE_INDEXER_ERROR';
 
 interface FetchIndexersPendingAction {
     type: typeof FETCH_INDEXERS_PENDING
@@ -39,19 +43,34 @@ interface FetchIndexersErrorAction {
     error: string
 }
 
-interface AddIndexerPendingAction {
-    type: typeof ADD_INDEXER_PENDING
+interface UpdateIndexerPendingAction {
+    type: typeof UPDATE_INDEXER_PENDING
 }
 
-interface AddIndexerSuccessAction {
-    type: typeof ADD_INDEXER_SUCCESS
+interface UpdateIndexerSuccessAction {
+    type: typeof UPDATE_INDEXER_SUCCESS
     id: string
 }
 
-interface AddIndexerErrorAction {
-    type: typeof ADD_INDEXER_ERROR
+interface UpdateIndexerErrorAction {
+    type: typeof UPDATE_INDEXER_ERROR
+    errorUpdate: string
+}
+
+interface DeleteIndexerPendingAction {
+    type: typeof DELETE_INDEXER_PENDING
+}
+
+interface DeleteIndexerSuccessAction {
+    type: typeof DELETE_INDEXER_SUCCESS
+    id: string
+}
+
+interface DeleteIndexerErrorAction {
+    type: typeof DELETE_INDEXER_ERROR
     errorUpdate: string
 }
 
 export type IndexersConfigActionTypes = FetchIndexersPendingAction | FetchIndexersSuccessAction | FetchIndexersErrorAction |
-    AddIndexerPendingAction | AddIndexerSuccessAction | AddIndexerErrorAction
+    UpdateIndexerPendingAction | UpdateIndexerSuccessAction | UpdateIndexerErrorAction |
+    DeleteIndexerPendingAction | DeleteIndexerSuccessAction | DeleteIndexerErrorAction

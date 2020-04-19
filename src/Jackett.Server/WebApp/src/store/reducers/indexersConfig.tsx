@@ -1,6 +1,7 @@
 import {
     FETCH_INDEXERS_PENDING, FETCH_INDEXERS_SUCCESS, FETCH_INDEXERS_ERROR,
-    ADD_INDEXER_PENDING, ADD_INDEXER_SUCCESS, ADD_INDEXER_ERROR,
+    UPDATE_INDEXER_PENDING, UPDATE_INDEXER_SUCCESS, UPDATE_INDEXER_ERROR,
+    DELETE_INDEXER_PENDING, DELETE_INDEXER_SUCCESS, DELETE_INDEXER_ERROR,
     IndexersConfigState, IndexersConfigActionTypes
 } from "../types/indexersConfig";
 import {IndexerConfig} from "../../api/indexers";
@@ -21,6 +22,9 @@ const initialState: IndexersConfigState = {
 // Reducers
 
 export default function indexersReducer(state = initialState, action: IndexersConfigActionTypes) {
+    let configuredIndexers: Array<IndexerConfig> = [];
+    let unConfiguredIndexers: Array<IndexerConfig> = [];
+
     switch(action.type) {
         case FETCH_INDEXERS_PENDING:
             return {
@@ -40,15 +44,15 @@ export default function indexersReducer(state = initialState, action: IndexersCo
                 isLoaded: true,
                 error: action.error
             }
-        case ADD_INDEXER_PENDING:
+        case UPDATE_INDEXER_PENDING:
             return {
                 ...state,
                 isUpdating: true,
                 errorUpdate: ""
             }
-        case ADD_INDEXER_SUCCESS:
-            let configuredIndexers: Array<IndexerConfig> = state.configuredIndexers;
-            let unConfiguredIndexers: Array<IndexerConfig> = state.unConfiguredIndexers;
+        case UPDATE_INDEXER_SUCCESS:
+            configuredIndexers = state.configuredIndexers;
+            unConfiguredIndexers = state.unConfiguredIndexers;
 
             // if the indexer is updated we don't do anything
             const findIndexer = state.unConfiguredIndexers
@@ -70,7 +74,44 @@ export default function indexersReducer(state = initialState, action: IndexersCo
                 configuredIndexers: configuredIndexers,
                 unConfiguredIndexers: unConfiguredIndexers
             }
-        case ADD_INDEXER_ERROR:
+        case UPDATE_INDEXER_ERROR:
+            return {
+                ...state,
+                isUpdating: false,
+                errorUpdate: action.errorUpdate
+            }
+        case DELETE_INDEXER_PENDING:
+            return {
+                ...state,
+                isUpdating: true,
+                errorUpdate: ""
+            }
+        case DELETE_INDEXER_SUCCESS:
+            configuredIndexers = state.configuredIndexers;
+            unConfiguredIndexers = state.unConfiguredIndexers;
+
+            // TODO: fix
+            // if the indexer is updated we don't do anything
+            const findIndexer2 = state.configuredIndexers
+                .filter(indexer => indexer.id === action.id);
+            if (findIndexer2.length > 0) {
+                let indexerConfig = findIndexer2[0];
+                indexerConfig.configured = false;
+
+                unConfiguredIndexers = unConfiguredIndexers.slice();
+                unConfiguredIndexers.push(indexerConfig);
+
+                configuredIndexers = configuredIndexers.filter(indexer => indexer.id !== action.id);
+            }
+
+            return {
+                ...state,
+                isUpdating: false,
+                errorUpdate: "",
+                configuredIndexers: configuredIndexers,
+                unConfiguredIndexers: unConfiguredIndexers
+            }
+        case DELETE_INDEXER_ERROR:
             return {
                 ...state,
                 isUpdating: false,

@@ -1,9 +1,13 @@
 import {Dispatch} from "redux";
 import {
     fetchIndexersPending, fetchIndexersSuccess,fetchIndexersError,
-    addIndexerPending, addIndexerSuccess, addIndexerError
+    updateIndexerPending, updateIndexerSuccess, updateIndexerError,
+    deleteIndexerPending, deleteIndexerSuccess, deleteIndexerError
 } from "../actions/indexersConfig";
-import {getIndexers, postIndexerConfig, IndexerConfig, IndexerConfigFields} from "../../api/indexers";
+import {
+    getIndexers, postIndexerConfig, deleteIndexer,
+    IndexerConfig, IndexerConfigFields
+} from "../../api/indexers";
 
 //
 // Thunks
@@ -34,17 +38,32 @@ export function fetchIndexersConfig() {
     }
 }
 
-export function addIndexerConfig(id: string, indexerConfigFields: IndexerConfigFields) {
+export function updateIndexerConfig(id: string, indexerConfigFields: IndexerConfigFields) {
     return (dispatch: Dispatch) => {
-        dispatch(addIndexerPending());
+        dispatch(updateIndexerPending());
 
         postIndexerConfig(id, indexerConfigFields)
-            .then(response => {
-                dispatch(addIndexerSuccess(id));
+            .then(() => {
+                dispatch(updateIndexerSuccess(id));
             })
             .catch(error => {
                 const errorUpdate = error.response.data.error || error.message;
-                dispatch(addIndexerError(errorUpdate));
+                dispatch(updateIndexerError(errorUpdate));
+            });
+    }
+}
+
+export function deleteIndexerConfig(id: string) {
+    return (dispatch: Dispatch) => {
+        dispatch(deleteIndexerPending());
+
+        deleteIndexer(id)
+            .then(() => {
+                dispatch(deleteIndexerSuccess(id));
+            })
+            .catch(error => {
+                const errorUpdate = error.response.data.error || error.message;
+                dispatch(deleteIndexerError(errorUpdate));
             });
     }
 }

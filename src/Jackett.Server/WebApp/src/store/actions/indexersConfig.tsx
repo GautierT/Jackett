@@ -1,6 +1,7 @@
 import {
     FETCH_INDEXERS_PENDING, FETCH_INDEXERS_SUCCESS, FETCH_INDEXERS_ERROR,
-    ADD_INDEXER_PENDING, ADD_INDEXER_SUCCESS, ADD_INDEXER_ERROR,
+    UPDATE_INDEXER_PENDING, UPDATE_INDEXER_SUCCESS, UPDATE_INDEXER_ERROR,
+    DELETE_INDEXER_PENDING, DELETE_INDEXER_SUCCESS, DELETE_INDEXER_ERROR,
     IndexersConfigActionTypes
 } from "../types/indexersConfig";
 import {IndexerConfig} from "../../api/indexers";
@@ -14,8 +15,8 @@ export function fetchIndexersPending(): IndexersConfigActionTypes {
     }
 }
 
-export function fetchIndexersSuccess(configuredIndexers: Array<IndexerConfig>, unConfiguredIndexers: Array<IndexerConfig>)
-    : IndexersConfigActionTypes {
+export function fetchIndexersSuccess(configuredIndexers: Array<IndexerConfig>,
+                                     unConfiguredIndexers: Array<IndexerConfig>) : IndexersConfigActionTypes {
     return {
         type: FETCH_INDEXERS_SUCCESS,
         configuredIndexers: configuredIndexers,
@@ -30,24 +31,42 @@ export function fetchIndexersError(error: string): IndexersConfigActionTypes {
     }
 }
 
-// TODO: rename all actions, types... to Update Indexer
-export function addIndexerPending(): IndexersConfigActionTypes {
+export function updateIndexerPending(): IndexersConfigActionTypes {
     return {
-        type: ADD_INDEXER_PENDING
+        type: UPDATE_INDEXER_PENDING
     }
 }
 
-export function addIndexerSuccess(id: string)
-    : IndexersConfigActionTypes {
+export function updateIndexerSuccess(id: string) : IndexersConfigActionTypes {
     return {
-        type: ADD_INDEXER_SUCCESS,
+        type: UPDATE_INDEXER_SUCCESS,
         id: id
     }
 }
 
-export function addIndexerError(errorUpdate: string): IndexersConfigActionTypes {
+export function updateIndexerError(errorUpdate: string): IndexersConfigActionTypes {
     return {
-        type: ADD_INDEXER_ERROR,
+        type: UPDATE_INDEXER_ERROR,
+        errorUpdate: errorUpdate
+    }
+}
+
+export function deleteIndexerPending(): IndexersConfigActionTypes {
+    return {
+        type: DELETE_INDEXER_PENDING
+    }
+}
+
+export function deleteIndexerSuccess(id: string) : IndexersConfigActionTypes {
+    return {
+        type: DELETE_INDEXER_SUCCESS,
+        id: id
+    }
+}
+
+export function deleteIndexerError(errorUpdate: string): IndexersConfigActionTypes {
+    return {
+        type: DELETE_INDEXER_ERROR,
         errorUpdate: errorUpdate
     }
 }
