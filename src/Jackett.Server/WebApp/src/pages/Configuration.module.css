@@ -10,3 +10,7 @@
 .formCustom div[class*="ant-row ant-form-item"] {
     margin-bottom: 10px !important;
 }
+
+.copyApiKey {
+    cursor: pointer;
+}

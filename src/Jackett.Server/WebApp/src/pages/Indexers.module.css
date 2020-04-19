@@ -36,3 +36,28 @@
     white-space: nowrap;
     max-width: 1px;
 }
+
+.headerRow {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.headerApiKey {
+    text-align: center;
+}
+
+.headerApiKeyInput {
+    width: 325px;
+}
+
+.headerApiKeyCopy {
+    cursor: pointer;
+}
+
+.headerFilter {
+    text-align: right;
+}
+
+.headerFilterInput {
+    width: 300px;
+}

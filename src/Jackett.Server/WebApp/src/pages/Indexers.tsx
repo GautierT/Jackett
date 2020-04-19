@@ -3,20 +3,20 @@ import {ReactNode} from "react";
 import {withRouter} from "react-router-dom";
 import {RouteComponentProps} from "react-router";
 import {connect} from "react-redux";
-import {Button, Card, notification, Table, Tag} from "antd";
-import {InfoCircleOutlined, SettingOutlined, SearchOutlined, DeleteOutlined, CopyOutlined} from "@ant-design/icons";
+import CopyToClipboard from "react-copy-to-clipboard";
+import {Button, Card, Col, Input, notification, Row, Table, Tag} from "antd";
+import {CopyOutlined, DeleteOutlined, InfoCircleOutlined, SearchOutlined, SettingOutlined} from "@ant-design/icons";
 import {ColumnsType} from "antd/lib/table/interface";
 import qs from "qs";
 
+import {resolveAbsoluteUrl} from "../utils";
 import {RootState} from "../store/reducers";
 import {getIndexerConfig, IndexerConfig, IndexerConfigFields, IndexerType} from "../api/indexers";
+import {ServerConfig} from "../api/configuration";
 import IndexerConfiguration from "../components/IndexerConfiguration";
 import IndexerCapabilities from "../components/IndexerCapabilities";
-import {updateIndexerConfig, deleteIndexerConfig} from "../store/thunks/indexersConfig";
+import {deleteIndexerConfig, updateIndexerConfig} from "../store/thunks/indexersConfig";
 import styles from "./Indexers.module.css";
-import CopyToClipboard from "react-copy-to-clipboard";
-import {ServerConfig} from "../api/configuration";
-import {resolveAbsoluteUrl} from "../utils";
 
 enum FeedType {
     RSS,
@@ -25,6 +25,7 @@ enum FeedType {
 }
 
 interface State {
+    tableDataSource: Array<IndexerConfig>
     modalComponent: ReactNode
     isLoadingModal: boolean
 }
@@ -92,10 +93,12 @@ class Indexers extends React.Component<Props, State> {
     ];
     waitingForUpdate = false;
     waitingForDelete = false;
+    searchFilterTimeout: any = null;
 
     constructor(props: Props) {
         super(props);
         this.state = {
+            tableDataSource: this.props.configuredIndexers,
             modalComponent: null,
             isLoadingModal: false
         };
@@ -249,6 +252,51 @@ class Indexers extends React.Component<Props, State> {
         this.setState({modalComponent: null});
     }
 
+    onSearchFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (this.searchFilterTimeout) {
+            clearTimeout(this.searchFilterTimeout);
+        }
+        const input = event.target.value;
+        this.searchFilterTimeout = setTimeout(() => this.handleSearchFilter(input), 1000);
+    }
+
+    handleSearchFilter = (input: string) => {
+        // remove empty words and words with operator only
+        const filterTerms = input.toLowerCase().split(" ")
+            .filter(term => !(!term || term === "+" || term === "-"));
+
+        // split terms in positives (include) and negatives (exclude)
+        let positiveTerms: string[] = [];
+        let negativeTerms: string[] = [];
+        filterTerms.forEach(term => {
+            const operator = term.charAt(0); // supported operators => + and -
+            if (operator === "-") {
+                negativeTerms.push(term.slice(1)); // -hello => hello
+            } else if (operator === "+") {
+                positiveTerms.push(term.slice(1)); // +world => world // +-hello => -hello
+            } else {
+                positiveTerms.push(term);
+            }
+        });
+
+        // filter rows
+        const filteredIndexers = this.props.configuredIndexers.filter(indexer => {
+            const text = (indexer.name + " " + indexer.type + " " + indexer.language).toLowerCase();
+            for (let i = 0; i < positiveTerms.length; i++) {
+                if (!text.includes(positiveTerms[i])) {
+                    return false;
+                }
+            }
+            for (let i = 0; i < negativeTerms.length; i++) {
+                if (text.includes(negativeTerms[i])) {
+                    return false;
+                }
+            }
+            return true;
+        });
+        this.setState({tableDataSource: filteredIndexers});
+    }
+
     componentDidUpdate() {
         // TODO: do this logic in other components
         if (this.waitingForUpdate || this.waitingForDelete) {
@@ -276,10 +324,56 @@ class Indexers extends React.Component<Props, State> {
     }
 
     render() {
+        let numPrivate = 0;
+        let numSemiPrivate = 0;
+        let numPublic = 0;
+        this.props.configuredIndexers.forEach(indexer => {
+            switch (indexer.type) {
+                case IndexerType.Private:
+                    numPrivate++;
+                    break;
+                case IndexerType.SemiPrivate:
+                    numSemiPrivate++;
+                    break;
+                default:
+                    numPublic++;
+            }
+        });
+
         return (
             <Card title="Configured indexers" style={{ width: "100%" }}>
+                <Row className={styles.headerRow}>
+                    <Col span={8}>
+                        {this.props.configuredIndexers.length} indexers configured
+                        ({numPublic} public, {numSemiPrivate} semi-private, {numPrivate} private)
+                    </Col>
+                    <Col span={8} className={styles.headerApiKey}>API key <Input
+                        readOnly
+                        defaultValue={this.props.config.api_key}
+                        className={styles.headerApiKeyInput}
+                        addonAfter={
+                            <CopyToClipboard text={this.props.config.api_key}
+                                             onCopy={() => notification.success({
+                                                 message: "Copied to clipboard!",
+                                                 placement: "bottomRight"
+                                             })}>
+                                <span className={styles.headerApiKeyCopy}><CopyOutlined /></span>
+                            </CopyToClipboard>
+                        }
+                        />
+                    </Col>
+                    <Col span={8} className={styles.headerFilter}>
+                        <Input
+                            placeholder="Search filter"
+                            allowClear
+                            prefix={<SearchOutlined />}
+                            className={styles.headerFilterInput}
+                            onChange={this.onSearchFilterChange}
+                        />
+                    </Col>
+                </Row>
                 <Table
-                    dataSource={this.props.configuredIndexers}
+                    dataSource={this.state.tableDataSource}
                     columns={this.tableColumns}
                     rowKey="id"
                     size="small"

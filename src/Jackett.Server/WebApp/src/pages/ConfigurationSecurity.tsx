@@ -128,20 +128,20 @@ class ConfigurationSecurity extends React.Component<Props, State> {
                             <label>Jackett API key</label>
                         </Col>
                         <Col span={10}>
-                            <Row>
-                                <Col span={20}>
-                                    <Input disabled defaultValue={this.props.config.api_key}/>
-                                </Col>
-                                <Col span={4}>
+                            <Input
+                                readOnly
+                                defaultValue={this.props.config.api_key}
+                                className={styles.copyApiKey}
+                                addonAfter={
                                     <CopyToClipboard text={this.props.config.api_key}
                                                      onCopy={() => notification.success({
                                                          message: "Copied to clipboard!",
                                                          placement: "bottomRight"
                                                      })}>
-                                        <Button type="primary"><CopyOutlined /></Button>
+                                        <span className={styles.headerApiKeyCopy}><CopyOutlined /></span>
                                     </CopyToClipboard>
-                                </Col>
-                            </Row>
+                                }
+                            />
                         </Col>
                     </Row>
                 </div>
