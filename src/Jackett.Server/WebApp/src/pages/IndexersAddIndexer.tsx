@@ -3,6 +3,7 @@ import {ReactNode} from "react";
 import {connect} from "react-redux";
 import {Card, notification, Table, Tag} from "antd";
 import {
+    InfoCircleOutlined,
     PlusSquareOutlined, SettingOutlined
 } from "@ant-design/icons/lib";
 import {ColumnsType} from "antd/lib/table/interface";
@@ -15,6 +16,7 @@ import {
 } from "../api/indexers";
 import IndexerConfiguration from "../components/IndexerConfiguration";
 import styles from "./Indexers.module.css";
+import IndexerCapabilities from "../components/IndexerCapabilities";
 
 interface TableRow {
     id: string
@@ -141,14 +143,15 @@ class IndexersAddIndexer extends React.Component<Props, State> {
     }
 
     renderColumnActions = (record:TableRow): ReactNode => {
-        const configureButton = <Tag title="Configure indexer" onClick={() => this.configureIndexer(record.id)}><SettingOutlined /></Tag>;
-        const addButton = record.type === IndexerType.Public ? <Tag title="Add indexer" onClick={() => this.addIndexer(record.id)}><PlusSquareOutlined /></Tag> : '';
+        const capabilitiesButton = <Tag title="Indexer capabilities" onClick={() => this.actionIndexerCapabilities(record.id)}><InfoCircleOutlined /></Tag>;
+        const configureButton = <Tag title="Configure indexer" onClick={() => this.actionConfigureIndexer(record.id)}><SettingOutlined /></Tag>;
+        const addButton = record.type === IndexerType.Public ? <Tag title="Add indexer" onClick={() => this.actionAddIndexer(record.id)}><PlusSquareOutlined /></Tag> : '';
         return (
-            <div className={styles.actions}>{configureButton} {addButton}</div>
+            <div className={styles.actions}>{capabilitiesButton} {configureButton} {addButton}</div>
         );
     }
 
-    addIndexer = (id: string) => {
+    actionAddIndexer = (id: string) => {
         getIndexerConfig(id)
             .then(response => {
                 this.waitingForUpdate = true;
@@ -160,7 +163,7 @@ class IndexersAddIndexer extends React.Component<Props, State> {
             });
     }
 
-    configureIndexer = (id: string) => {
+    actionConfigureIndexer = (id: string) => {
         getIndexerConfig(id)
             .then(response => {
                 // TODO: index this.props.unConfiguredIndexers by id
@@ -169,36 +172,12 @@ class IndexersAddIndexer extends React.Component<Props, State> {
 
                 this.setState({
                     modalComponent: (
-                        <div>
                         <IndexerConfiguration
                             indexerConfig={indexerConfig}
                             configFields={response.data}
-                            onConfigured={this.onModalConfigured}
-                            onCancel={this.onModalCancel}
+                            onConfigured={this.onConfigModalConfigured}
+                            onCancel={this.onConfigModalCancel}
                         />
-
-                           {/*<div className="indexer-caps">*/}
-                           {/*    <h4>Capabilities</h4>*/}
-                           {/*    <table className="dataTable compact cell-border hover stripe">*/}
-                           {/*        <thead>*/}
-                           {/*        <tr>*/}
-                           {/*            <th>Category</th>*/}
-                           {/*            <th>Description</th>*/}
-                           {/*        </tr>*/}
-                           {/*        </thead>*/}
-                           {/*        <tbody>*/}
-                           {/*            {indexerConfig.caps.map(cap => {*/}
-                           {/*                return (*/}
-                           {/*                    <tr>*/}
-                           {/*                        <td>{cap.ID}</td>*/}
-                           {/*                        <td>{cap.Name}</td>*/}
-                           {/*                    </tr>*/}
-                           {/*                )})*/}
-                           {/*            }*/}
-                           {/*        </tbody>*/}
-                           {/*    </table>*/}
-                           {/*</div>*/}
-                        </div>
                    )
                 });
 
@@ -211,12 +190,30 @@ class IndexersAddIndexer extends React.Component<Props, State> {
             });
     }
 
-    onModalConfigured = (indexerConfig: IndexerConfig, configFields: IndexerConfigFields): void => {
+    onConfigModalConfigured = (indexerConfig: IndexerConfig, configFields: IndexerConfigFields): void => {
         this.waitingForUpdate = true;
         this.props.addIndexerConfig(indexerConfig.id, configFields);
     }
 
-    onModalCancel = (): void => {
+    onConfigModalCancel = (): void => {
+        this.setState({modalComponent: null});
+    }
+
+    actionIndexerCapabilities = (id: string) => {
+        // TODO: index this.props.unConfiguredIndexers by id
+        let indexerConfig = this.props.unConfiguredIndexers
+            .filter(indexer => indexer.id === id)[0];
+        this.setState({
+            modalComponent: (
+                <IndexerCapabilities
+                    indexerConfig={indexerConfig}
+                    onClose={this.onCapabilitiesModalClose}
+                />
+            )
+        });
+    }
+
+    onCapabilitiesModalClose = (): void => {
         this.setState({modalComponent: null});
     }
 
