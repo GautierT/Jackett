@@ -14,6 +14,7 @@ export function fetchIndexersConfig() {
 
         getIndexers()
             .then(response => {
+                // TODO: index by id
                 let configuredIndexers: Array<IndexerConfig> = [];
                 let unConfiguredIndexers: Array<IndexerConfig> = [];
                 response.data.forEach(indexer => {

@@ -8,8 +8,11 @@
 .actions span {
     cursor: pointer;
     margin-right: 1px !important;
-    font-size: 14px!important;
-    line-height: 18px!important;
+    font-size: 14px !important;
+    line-height: 18px !important;
+    color: #fff;
+    background-color: #40a9ff;
+    border-color: #40a9ff;
 }
 
 .tableCustom div[class="ant-table-content"] td {

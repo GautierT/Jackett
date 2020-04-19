@@ -37,12 +37,23 @@ export function getIndexers()
     });
 }
 
+export enum ConfigFieldType {
+    InputString = "inputstring",
+    InputBool = "inputbool",
+    InputCheckbox = "inputcheckbox",
+    InputSelect = "inputselect",
+    HiddenData = "hiddendata",
+    DisplayInfo = "displayinfo",
+    DisplayImage = "displayimage",
+    ReCaptcha = "recaptcha"
+}
+
 export interface IndexerConfigField {
     id: string
-    type: string
+    type: ConfigFieldType
     name: string
     value: string
-    options?: object
+    options: {[key: string]: string}
 }
 
 export interface IndexerConfigFields extends Array<IndexerConfigField> {}

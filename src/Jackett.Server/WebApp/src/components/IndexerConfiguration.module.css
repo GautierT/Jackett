@@ -1,0 +1,27 @@
+.formCustom div[class*="ant-row ant-form-item"] {
+    margin-bottom: 10px;
+}
+
+.formCustom div[class*="ant-row ant-form-item"] div {
+    overflow: visible;
+}
+
+.formCustom label {
+    white-space: normal;
+}
+
+.formCustom label::after {
+    content: ' ';
+}
+
+.fieldHidden {
+    display: none;
+}
+
+.alert {
+    margin-bottom: 10px;
+}
+
+.alert span {
+    color: #31708f;
+}
