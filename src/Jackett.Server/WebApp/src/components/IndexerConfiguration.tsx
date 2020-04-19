@@ -63,7 +63,7 @@ class IndexerConfiguration extends React.Component<Props, {}> {
             case ConfigFieldType.HiddenData:
             case ConfigFieldType.DisplayInfo:
                 let components: Array<ReactNode> = [(
-                    <Form.Item label={configField.name} name={configField.id} className={styles.fieldHidden}>
+                    <Form.Item label={configField.name} name={configField.id} key={configField.id} className={styles.fieldHidden}>
                         <Input />
                     </Form.Item>
                 )];
@@ -77,26 +77,26 @@ class IndexerConfiguration extends React.Component<Props, {}> {
                 return components;
             case ConfigFieldType.InputString:
                 return (
-                    <Form.Item label={configField.name} name={configField.id}>
+                    <Form.Item label={configField.name} name={configField.id} key={configField.id}>
                         {configField.id.toLowerCase() === "password" ? <Input.Password /> : <Input />}
                     </Form.Item>
                 );
             case ConfigFieldType.InputBool:
                 return (
-                    <Form.Item label={configField.name} name={configField.id} valuePropName="checked">
+                    <Form.Item label={configField.name} name={configField.id} key={configField.id} valuePropName="checked">
                         <Switch />
                     </Form.Item>
                 );/*
             case ConfigFieldType.InputCheckbox:
                 return (
-                    <Form.Item label={configField.name} name={configField.id}>
+                    <Form.Item label={configField.name} name={configField.id} key={configField.id}>
                         <Input />
                     </Form.Item>
                 );*/
 
             case ConfigFieldType.InputSelect:
                 return (
-                    <Form.Item label={configField.name} name={configField.id}>
+                    <Form.Item label={configField.name} name={configField.id} key={configField.id}>
                         <Select>
                             {Object.keys(configField.options).map((key: string) => (
                                 <Select.Option key={key} value={key}>{configField.options[key]}</Select.Option>

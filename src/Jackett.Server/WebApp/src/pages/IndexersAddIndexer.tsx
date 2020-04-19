@@ -31,6 +31,7 @@ interface TableRow {
 interface State {
     tableDataSource: Array<TableRow>
     modalComponent: ReactNode
+    isLoadingModal: boolean
 }
 
 interface Props {
@@ -100,7 +101,8 @@ class IndexersAddIndexer extends React.Component<Props, State> {
         super(props);
         this.state = {
             tableDataSource: this.generateTableDataSource(),
-            modalComponent: null
+            modalComponent: null,
+            isLoadingModal: false
         };
     }
 
@@ -151,7 +153,10 @@ class IndexersAddIndexer extends React.Component<Props, State> {
         );
     }
 
+    // TODO: merge action add with action configure
     actionAddIndexer = (id: string) => {
+        this.setState({isLoadingModal: true});
+
         getIndexerConfig(id)
             .then(response => {
                 this.waitingForUpdate = true;
@@ -160,10 +165,15 @@ class IndexersAddIndexer extends React.Component<Props, State> {
             .catch(error => {
                 // TODO: show the error
                 console.error(error);
-            });
+            })
+            .finally(() => {
+                this.setState({isLoadingModal: false});
+            })
     }
 
     actionConfigureIndexer = (id: string) => {
+        this.setState({isLoadingModal: true});
+
         getIndexerConfig(id)
             .then(response => {
                 // TODO: index this.props.unConfiguredIndexers by id
@@ -187,7 +197,10 @@ class IndexersAddIndexer extends React.Component<Props, State> {
             .catch(error => {
                 // TODO: show the error
                 console.error(error);
-            });
+            })
+            .finally(() => {
+                this.setState({isLoadingModal: false});
+            })
     }
 
     onConfigModalConfigured = (indexerConfig: IndexerConfig, configFields: IndexerConfigFields): void => {
@@ -253,7 +266,7 @@ class IndexersAddIndexer extends React.Component<Props, State> {
                     className={styles.tableCustom}
                     pagination={{position:["bottomLeft"]}}
                     showSorterTooltip={false}
-                    loading={this.props.isUpdating}
+                    loading={this.props.isUpdating || this.state.isLoadingModal}
                 />
                 {this.state.modalComponent}
             </Card>
