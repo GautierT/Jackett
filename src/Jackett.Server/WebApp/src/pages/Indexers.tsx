@@ -3,8 +3,8 @@ import {ReactNode} from "react";
 import {withRouter} from "react-router-dom";
 import {RouteComponentProps} from "react-router";
 import {connect} from "react-redux";
-import {Card, notification, Table, Tag} from "antd";
-import {InfoCircleOutlined, SettingOutlined, SearchOutlined} from "@ant-design/icons";
+import {Button, Card, notification, Table, Tag} from "antd";
+import {InfoCircleOutlined, SettingOutlined, SearchOutlined, DeleteOutlined, CopyOutlined} from "@ant-design/icons";
 import {ColumnsType} from "antd/lib/table/interface";
 import qs from "qs";
 
@@ -14,6 +14,15 @@ import IndexerConfiguration from "../components/IndexerConfiguration";
 import IndexerCapabilities from "../components/IndexerCapabilities";
 import {addIndexerConfig} from "../store/thunks/indexersConfig";
 import styles from "./Indexers.module.css";
+import CopyToClipboard from "react-copy-to-clipboard";
+import {ServerConfig} from "../api/configuration";
+import {resolveAbsoluteUrl} from "../utils";
+
+enum FeedType {
+    RSS,
+    Torznab,
+    Potato
+}
 
 interface State {
     modalComponent: ReactNode
@@ -21,6 +30,7 @@ interface State {
 }
 
 interface Props extends RouteComponentProps {
+    config: ServerConfig
     configuredIndexers: Array<IndexerConfig>
     isUpdating: boolean
     errorUpdate: string
@@ -29,6 +39,7 @@ interface Props extends RouteComponentProps {
 
 function mapStateToProps(state: RootState) {
     return {
+        config: state.config.config,
         configuredIndexers: state.indexers.configuredIndexers,
         isUpdating: state.indexers.isUpdating,
         errorUpdate: state.indexers.errorUpdate
@@ -68,7 +79,13 @@ class Indexers extends React.Component<Props, State> {
         {
             title: 'Actions',
             dataIndex: 'id',
+            width: '1px',
             render: (text:string, record:IndexerConfig) => this.renderColumnActions(record)
+        },
+        {
+            title: 'Feeds',
+            dataIndex: 'id',
+            render: (text:string, record:IndexerConfig) => this.renderColumnFeeds(record)
         }
     ];
     waitingForUpdate = false;
@@ -82,7 +99,7 @@ class Indexers extends React.Component<Props, State> {
     }
 
     // TODO: is duplicate in add indexer
-    renderColumnType = (record:IndexerConfig): ReactNode => {
+    renderColumnType = (record: IndexerConfig): ReactNode => {
         switch(record.type) {
             case IndexerType.Private:
                 return <Tag color="red" key="private">{record.type}</Tag>;
@@ -94,13 +111,68 @@ class Indexers extends React.Component<Props, State> {
     }
 
     // TODO: create a component or actions
-    renderColumnActions = (record:IndexerConfig): ReactNode => {
-        const searchButton = <Tag title="Search" onClick={() => this.actionSearch(record.id)}><SearchOutlined /> Search</Tag>;
-        const capabilitiesButton = <Tag title="Indexer capabilities" onClick={() => this.actionIndexerCapabilities(record.id)}><InfoCircleOutlined /> Caps</Tag>;
-        const configureButton = <Tag title="Configure indexer" onClick={() => this.actionConfigureIndexer(record.id)}><SettingOutlined /> Config</Tag>;
+    renderColumnActions = (record: IndexerConfig): ReactNode => {
+        const searchButton = <Button title="Search" icon={<SearchOutlined />} size="small"
+                                     onClick={() => this.actionSearch(record.id)}>Search</Button>;
+        const capabilitiesButton = <Button title="Indexer capabilities" icon={<InfoCircleOutlined />} size="small"
+                                           onClick={() => this.actionIndexerCapabilities(record.id)}>Caps</Button>;
+        const configureButton = <Button title="Configure indexer" icon={<SettingOutlined />} size="small" className={styles.actionButtonBlue}
+                                        onClick={() => this.actionConfigureIndexer(record.id)}>Config</Button>;
+        const removeButton = <Button title="Remove indexer" icon={<DeleteOutlined />} size="small" className={styles.actionButtonRed}
+                                     onClick={() => this.actionConfigureIndexer(record.id)}>Remove</Button>;
         return (
-            <div className={styles.actions}>{searchButton} {capabilitiesButton} {configureButton}</div>
+            <div className={styles.actions}>{searchButton} {capabilitiesButton} {configureButton} {removeButton}</div>
         );
+    }
+
+    renderColumnFeeds = (record: IndexerConfig): ReactNode => {
+        const rssButton = this.renderCopyFeed(record.id, FeedType.RSS);
+        const torznabButton = this.renderCopyFeed(record.id, FeedType.Torznab);
+        const potatoButton = this.renderCopyFeed(record.id, FeedType.Potato, record.potatoenabled);
+        return (
+            <div className={styles.actions}>
+                {rssButton} {torznabButton} {potatoButton}
+            </div>
+        );
+    }
+
+    renderCopyFeed = (id: string, type: FeedType, enabled: boolean = true) => {
+        if (!enabled) {
+            return "";
+        }
+
+        const basePath = this.props.config.basepathoverride;
+        const apiKey = this.props.config.api_key;
+        let message = "";
+        let url = "";
+
+        switch (type) {
+            case FeedType.RSS:
+                message = "Copy RSS Feed";
+                url = resolveAbsoluteUrl(basePath + "/api/v2.0/indexers/" + id + "/results/torznab/api?apikey=" + apiKey + "&t=search&cat=&q=");
+                break;
+            case FeedType.Torznab:
+                message = "Copy Torznab Feed";
+                url = resolveAbsoluteUrl(basePath + "/api/v2.0/indexers/" + id + "/results/torznab/");
+                break;
+            case FeedType.Potato:
+                message = "Copy Potato Feed";
+                url = resolveAbsoluteUrl(basePath + "/api/v2.0/indexers/" + id + "/results/potato/");
+                break;
+            default:
+                throw new Error("Not implemented!");
+        }
+
+        return (
+            <CopyToClipboard
+                text={url} // text copied
+                onCopy={() => notification.success({
+                    message: "Copied to clipboard!",
+                    placement: "bottomRight"
+                })}>
+                <Button title={message} size="small" icon={<CopyOutlined />}>{message}</Button>
+            </CopyToClipboard>
+        )
     }
 
     actionSearch = (id: string) => {
@@ -172,49 +244,6 @@ class Indexers extends React.Component<Props, State> {
         this.setState({modalComponent: null});
     }
 
-        /*
-        let results = [];
-
-        this.props.indexers.forEach(indexer => {
-
-            if (!indexer.configured)
-                return;
-
-
-            let classN = `label label-${indexer.type}`;
-
-            let indexerRender = (
-                <span>
-          <a className="indexer-name" target="_blank" href={ indexer.site_link } title={ indexer.description }>{ indexer.name }</a>
-          <span title={ indexer.type } className={ classN } style={{ textTransform: "capitalize" }}>{ indexer.type }</span>
-          </span>
-            );
-
-            let actions = (
-                <div className="indexer-buttons">
-
-                    <Button variant="contained" size="small" disableElevation>Copy RSS Feed</Button>
-                    <Button variant="contained" size="small" disableElevation>Copy Torznab Feed</Button>
-                    <Button variant="contained" size="small" disableElevation disabled={!indexer.potatoenabled}>Copy Potato Feed</Button>
-
-                    <Button variant="contained" size="small" disableElevation><FontAwesomeIcon icon={faSearch} /> Search</Button>
-                    <Button variant="contained" size="small" disableElevation><FontAwesomeIcon icon={faWrench} /> Edit</Button>
-                    <Button variant="contained" size="small" disableElevation><FontAwesomeIcon icon={faTrash} /> Remove</Button>
-
-                    <Button variant="contained" size="small" disableElevation>Test</Button>
-
-                </div>);
-
-            results.push({
-                indexer: indexer.name,
-                indexerRender: indexerRender,
-                actions: actions
-            });
-
-
-        });
-        */
-
     componentDidUpdate() {
         // TODO: do this logic in other components
         if (this.waitingForUpdate) {
@@ -248,7 +277,12 @@ class Indexers extends React.Component<Props, State> {
                     rowKey="id"
                     size="small"
                     className={styles.tableCustom}
-                    pagination={{position:["bottomLeft"]}}
+                    pagination={{
+                        position:["bottomLeft"],
+                        showSizeChanger: true,
+                        defaultPageSize: 15,
+                        pageSizeOptions: ["15", "30", "50", "100", "1000"]
+                    }}
                     showSorterTooltip={false}
                     loading={this.props.isUpdating || this.state.isLoadingModal}
                 />

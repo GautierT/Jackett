@@ -1,26 +1,38 @@
 .actions {
-    /*
-    width: 110px;
-    min-width: 110px;*/
     white-space: nowrap;
     display: block;
 }
 
-.actions span {
-    cursor: pointer;
-    margin-right: 1px !important;
-    font-size: 14px !important;
-    line-height: 18px !important;
-    color: #fff;
-    background-color: #40a9ff;
+.actionButtonBlue, .actionButtonBlue:hover {
+    color: #40a9ff;
+    background-color: #fff;
     border-color: #40a9ff;
 }
 
+.actionButtonRed, .actionButtonRed:hover {
+    color: #ff7875;
+    background-color: #fff;
+    border-color: #ff7875;
+}
+
+.actionButtonGreen, .actionButtonGreen:hover {
+    color: #52c41a;
+    background-color: #fff;
+    border-color: #52c41a;
+}
+
 .tableCustom div[class="ant-table-content"] td {
-    padding: 5px 10px;
+    padding: 5px 10px !important;
 }
 
 .tableCustom span[class*="ant-tag"] {
-    font-size: 11px;
-    line-height: 18px;
+    font-size: 11px !important;
+    line-height: 18px !important;
+}
+
+.largeText {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 1px;
 }

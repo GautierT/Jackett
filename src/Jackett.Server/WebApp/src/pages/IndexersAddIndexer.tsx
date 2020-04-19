@@ -1,7 +1,7 @@
 import * as React from "react";
 import {ReactNode} from "react";
 import {connect} from "react-redux";
-import {Card, notification, Table, Tag} from "antd";
+import {Button, Card, notification, Table, Tag} from "antd";
 import {ColumnsType} from "antd/lib/table/interface";
 import {
     InfoCircleOutlined, PlusCircleOutlined, SettingOutlined
@@ -81,16 +81,21 @@ class IndexersAddIndexer extends React.Component<Props, State> {
         {
             title: 'Actions',
             dataIndex: 'id',
+            width: '1px',
             render: (text:string, record:TableRow) => this.renderColumnActions(record)
         },
         {
             title: 'Categories',
             dataIndex: 'mainCats',
-            sorter: (a:TableRow, b:TableRow) => b.mainCats.localeCompare(a.mainCats)
+            width: '1px',
+            sorter: (a:TableRow, b:TableRow) => b.mainCats.localeCompare(a.mainCats),
+            render: (text:string, record:TableRow) => <span style={{whiteSpace: "nowrap"}}>{record.mainCats}</span>
         },
         {
             title: 'Description',
-            dataIndex: 'description'
+            dataIndex: 'description',
+            className: styles.largeText,
+            render: (text:string, record:TableRow) => <span title={record.description}>{record.description}</span>
         }
     ];
     waitingForUpdate = false;
@@ -143,9 +148,13 @@ class IndexersAddIndexer extends React.Component<Props, State> {
     }
 
     renderColumnActions = (record:TableRow): ReactNode => {
-        const capabilitiesButton = <Tag title="Indexer capabilities" onClick={() => this.actionIndexerCapabilities(record.id)}><InfoCircleOutlined /> Caps</Tag>;
-        const configureButton = <Tag title="Configure indexer" onClick={() => this.actionConfigureIndexer(record.id)}><SettingOutlined /> Config</Tag>;
-        const addButton = record.type === IndexerType.Public ? <Tag title="Add indexer" onClick={() => this.actionAddIndexer(record.id)}><PlusCircleOutlined /> Add</Tag> : '';
+        const capabilitiesButton = <Button title="Indexer capabilities" icon={<InfoCircleOutlined />} size="small"
+                                     onClick={() => this.actionIndexerCapabilities(record.id)}>Caps</Button>;
+        const configureButton = <Button title="Configure indexer" icon={<SettingOutlined />} size="small" className={styles.actionButtonBlue}
+                                        onClick={() => this.actionConfigureIndexer(record.id)}>Config</Button>;
+        const addButton = record.type === IndexerType.Public ?
+            <Button title="Add indexer" icon={<PlusCircleOutlined />} size="small" className={styles.actionButtonGreen}
+                    onClick={() => this.actionAddIndexer(record.id)}>Add</Button> : "";
         return (
             <div className={styles.actions}>{capabilitiesButton} {configureButton} {addButton}</div>
         );
@@ -262,7 +271,12 @@ class IndexersAddIndexer extends React.Component<Props, State> {
                     rowKey="id"
                     size="small"
                     className={styles.tableCustom}
-                    pagination={{position:["bottomLeft"]}}
+                    pagination={{
+                        position:["bottomLeft"],
+                        showSizeChanger: true,
+                        defaultPageSize: 15,
+                        pageSizeOptions: ["15", "30", "50", "100", "1000"]
+                    }}
                     showSorterTooltip={false}
                     loading={this.props.isUpdating || this.state.isLoadingModal}
                 />

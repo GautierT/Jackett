@@ -24,3 +24,11 @@ export function jackettTimespan(date: string) {
     const years = timeSpan.asYears();
     return Math.round(years) + 'y ago';
 }
+
+// TODO: improve this (copied from old implementation)
+export function resolveAbsoluteUrl(url: string) {
+    let a = document.createElement('a');
+    a.href = url;
+    url = a.href;
+    return url;
+}
