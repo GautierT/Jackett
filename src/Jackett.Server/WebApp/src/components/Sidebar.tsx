@@ -27,6 +27,7 @@ interface Props extends RouteComponentProps {
 }
 
 interface State {
+    lastPath: string
     lastOpenKey: string
     openKeys: Array<string>
     selectedKeys: Array<string>
@@ -37,6 +38,7 @@ class Sidebar extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
+            lastPath: "unknown",
             lastOpenKey: "",
             openKeys: [] as Array<string>,
             selectedKeys: [] as Array<string>
@@ -155,8 +157,11 @@ class Sidebar extends React.Component<Props, State> {
         });
     };
 
-    componentDidMount() {
+    loadPathFromRouter() {
         const {pathname} = this.props.location;
+        if (pathname === this.state.lastPath)
+            return;
+
         let lastOpenKey = "0";
         let defaultOpenKeys = ["0"];
         let defaultSelectedKeys = ["0_0"];
@@ -169,11 +174,21 @@ class Sidebar extends React.Component<Props, State> {
                 }
             })
         });
+
         this.setState({
+            lastPath: pathname,
             lastOpenKey: lastOpenKey,
             openKeys: defaultOpenKeys,
             selectedKeys: defaultSelectedKeys
         });
+    }
+
+    componentDidMount() {
+        this.loadPathFromRouter();
+    }
+
+    componentDidUpdate() {
+        this.loadPathFromRouter();
     }
 
     render() {
