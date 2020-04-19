@@ -31,8 +31,8 @@ class IndexerCapabilities extends React.Component<Props, {}> {
                     pagination={{
                         position:["bottomLeft"],
                         showSizeChanger: true,
-                        defaultPageSize: 10,
-                        pageSizeOptions: ["10", "20", "50", "100", "1000"]
+                        defaultPageSize: 15,
+                        pageSizeOptions: ["15", "30", "50", "100", "1000"]
                     }}
                     showSorterTooltip={false}
                 >

@@ -34,9 +34,11 @@ export enum ConfigFieldType {
     InputBool = "inputbool",
     InputCheckbox = "inputcheckbox",
     InputSelect = "inputselect",
-    HiddenData = "hiddendata",
-    DisplayInfo = "displayinfo",
     DisplayImage = "displayimage",
+    DisplayInfo = "displayinfo",
+    HiddenData = "hiddendata",
+    // ReCaptcha is deprecated and should be removed after it's removed from the backend
+    // https://github.com/Jackett/Jackett/issues/8268
     ReCaptcha = "recaptcha"
 }
 
@@ -46,6 +48,8 @@ export interface IndexerConfigField {
     name: string
     value: string
     options: {[key: string]: string}
+    values: Array<string> // used only by ConfigFieldType.InputCheckbox
+    cookie: string // used only by ConfigFieldType.ReCaptcha
 }
 
 export interface IndexerConfigFields extends Array<IndexerConfigField> {}

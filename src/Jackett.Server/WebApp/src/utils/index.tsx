@@ -32,3 +32,7 @@ export function resolveAbsoluteUrl(url: string) {
     url = a.href;
     return url;
 }
+
+export function getKeyByValue(object: any, value: any) {
+    return Object.keys(object).find(key => object[key] === value);
+}

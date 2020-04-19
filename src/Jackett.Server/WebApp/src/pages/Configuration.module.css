@@ -7,6 +7,6 @@
     border-bottom: 1px solid #f0f0f0;
 }
 
-.formCustom div[class="ant-row ant-form-item"] {
+.formCustom div[class*="ant-row ant-form-item"] {
     margin-bottom: 10px !important;
 }
