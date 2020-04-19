@@ -1,18 +1,13 @@
 import * as React from "react";
 // TODO: replace ReactNode with React.ReactNode1
 import {ReactNode} from "react";
-import ReactHtmlParser from 'react-html-parser';
-
-import {Form, Input, Select, Switch} from "antd";
-import Modal from "antd/lib/modal/Modal";
-import Button from "antd/lib/button";
+import {Form, Input, Select, Switch, Modal, Button, Alert} from "antd";
 import {FormInstance} from "antd/lib/form";
 
 import {
     IndexerConfig, ConfigFieldType, IndexerConfigField, IndexerConfigFields
 } from "../api/indexers";
 import styles from "./IndexerConfiguration.module.css";
-import Alert from "antd/lib/alert";
 
 interface Props {
     indexerConfig: IndexerConfig
@@ -73,7 +68,11 @@ class IndexerConfiguration extends React.Component<Props, {}> {
                     </Form.Item>
                 )];
                 if (configField.type === ConfigFieldType.DisplayInfo) {
-                    components.push(<Alert message={ReactHtmlParser(configField.name + "<br/>" + configField.value)} type="info" className={styles.alert} />);
+                    components.push(<Alert
+                        message={<div dangerouslySetInnerHTML={{__html: configField.name + "<br/>" + configField.value}}/>}
+                        type="info"
+                        className={styles.alert}
+                    />);
                 }
                 return components;
             case ConfigFieldType.InputString:

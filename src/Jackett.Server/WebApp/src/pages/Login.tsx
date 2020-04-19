@@ -1,8 +1,7 @@
 import React from 'react';
 import {Store} from 'rc-field-form/lib/interface.d'
-import {Button, Form, Input} from 'antd';
-import {LockOutlined, UserOutlined} from "@ant-design/icons/lib";
-import Alert from "antd/lib/alert";
+import {Button, Form, Input, Alert} from 'antd';
+import {LockOutlined, UserOutlined} from "@ant-design/icons";
 
 import {doLogin} from "../api/login";
 import JackettLogo from "../assets/jackett_logo.png";

@@ -2,11 +2,11 @@ import * as React from "react";
 import {ReactNode} from "react";
 import {connect} from "react-redux";
 import {Card, notification, Table, Tag} from "antd";
+import {ColumnsType} from "antd/lib/table/interface";
 import {
     InfoCircleOutlined,
     PlusSquareOutlined, SettingOutlined
-} from "@ant-design/icons/lib";
-import {ColumnsType} from "antd/lib/table/interface";
+} from "@ant-design/icons";
 
 import {RootState} from "../store/reducers";
 import {addIndexerConfig} from "../store/thunks/indexersConfig";

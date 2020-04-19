@@ -2,10 +2,9 @@ import React from 'react';
 import {connect} from "react-redux";
 import CopyToClipboard from 'react-copy-to-clipboard';
 import {Store} from 'rc-field-form/lib/interface.d'
-import {Button, Card, Form, Input, notification, Switch} from 'antd';
+import {Button, Card, Form, Input, notification, Switch, Col, Row} from 'antd';
 import {FormInstance} from "antd/lib/form";
-import {Col, Row} from "antd/lib/grid";
-import {CopyOutlined} from "@ant-design/icons/lib";
+import {CopyOutlined} from "@ant-design/icons";
 
 import {updateAdminPassword} from "../store/thunks/serverConfig";
 import {RootState} from "../store/reducers";

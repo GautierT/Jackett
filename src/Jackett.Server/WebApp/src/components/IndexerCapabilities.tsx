@@ -1,7 +1,5 @@
 import * as React from "react";
-import Modal from "antd/lib/modal/Modal";
-import Table from "antd/lib/table/Table";
-import Column from "antd/lib/table/Column";
+import {Modal, Table} from "antd";
 
 import {
     IndexerConfig, IndexerCaps
@@ -38,13 +36,13 @@ class IndexerCapabilities extends React.Component<Props, {}> {
                     }}
                     showSorterTooltip={false}
                 >
-                    <Column
+                    <Table.Column
                         title="Category"
                         dataIndex="ID"
                         sorter={(a:IndexerCaps, b:IndexerCaps) => b.ID.localeCompare(a.ID)}
                         width={120}
                     />
-                    <Column
+                    <Table.Column
                         title="Description"
                         dataIndex="Name"
                         sorter={(a:IndexerCaps, b:IndexerCaps) => b.Name.localeCompare(a.Name)}

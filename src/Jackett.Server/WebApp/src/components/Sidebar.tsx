@@ -5,7 +5,7 @@ import {Layout, Menu} from 'antd';
 import {
     CloudDownloadOutlined, DesktopOutlined, FileAddOutlined, FileSearchOutlined, FileTextOutlined, GithubOutlined,
     QuestionCircleOutlined, SafetyCertificateOutlined, SearchOutlined, SettingOutlined, StarOutlined
-} from "@ant-design/icons/lib";
+} from "@ant-design/icons";
 
 import JackettLogo from "../assets/jackett_logo.png";
 import styles from "./Sidebar.module.css";

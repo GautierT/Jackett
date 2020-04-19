@@ -1,3 +1,4 @@
+// TODO: remove moment dependency, it is heavy
 import moment from "moment";
 
 export function jackettTimespan(date: string) {
