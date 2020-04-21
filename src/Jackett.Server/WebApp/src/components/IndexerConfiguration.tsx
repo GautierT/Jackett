@@ -116,9 +116,11 @@ class IndexerConfiguration extends React.Component<Props, {}> {
                     </Form.Item>
                 );
             case ConfigFieldType.DisplayImage:
-                // TODO: not tested, try XSpeeds with Captcha
+                // tested with PolishSource tracker
                 return (
-                    <img src={configField.value} alt={configField.name} key={configField.id}/>
+                    <Form.Item label={configField.name} name={configField.id} key={configField.id}>
+                        <img src={configField.value} alt={configField.name}/>
+                    </Form.Item>
                 );
             case ConfigFieldType.DisplayInfo:
                 let infoMsg = configField.name ? `<i>${configField.name}:</i><br/>` : "";
@@ -137,6 +139,7 @@ class IndexerConfiguration extends React.Component<Props, {}> {
             case ConfigFieldType.ReCaptcha:
                 // this is deprecated and should be removed after it's removed from the backend
                 // https://github.com/Jackett/Jackett/issues/8268
+                // tested with SceneTime tracker
                 return (
                     <div key={configField.id}>
                         <Alert

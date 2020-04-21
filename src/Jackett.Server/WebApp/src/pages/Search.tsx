@@ -282,7 +282,12 @@ class Search extends React.Component<Props, State> {
                     rowKey="Guid"
                     size="small"
                     className={styles.tableCustom}
-                    pagination={{position:["bottomLeft"]}}
+                    pagination={{
+                        position:["bottomLeft"],
+                        showSizeChanger: true,
+                        defaultPageSize: 15,
+                        pageSizeOptions: ["15", "30", "50", "100", "1000"]
+                    }}
                     showSorterTooltip={false}
                     loading={this.state.isLoading}
                 />
