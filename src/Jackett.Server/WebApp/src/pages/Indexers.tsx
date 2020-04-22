@@ -17,6 +17,7 @@ import IndexerConfiguration from "../components/IndexerConfiguration";
 import IndexerCapabilities from "../components/IndexerCapabilities";
 import {deleteIndexerConfig, updateIndexerConfig} from "../store/thunks/indexersConfig";
 import styles from "./Indexers.module.css";
+import TableFilter from "../components/TableFilter";
 
 enum FeedType {
     RSS,
@@ -93,7 +94,6 @@ class Indexers extends React.Component<Props, State> {
     ];
     waitingForUpdate = false;
     waitingForDelete = false;
-    searchFilterTimeout: any = null;
 
     constructor(props: Props) {
         super(props);
@@ -252,50 +252,6 @@ class Indexers extends React.Component<Props, State> {
         this.setState({modalComponent: null});
     }
 
-    onSearchFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (this.searchFilterTimeout) {
-            clearTimeout(this.searchFilterTimeout);
-        }
-        const input = event.target.value;
-        this.searchFilterTimeout = setTimeout(() => this.handleSearchFilter(input), 1000);
-    }
-
-    handleSearchFilter = (input: string) => {
-        // remove empty words and words with operator only
-        const filterTerms = input.toLowerCase().split(" ")
-            .filter(term => !(!term || term === "+" || term === "-"));
-
-        // split terms in positives (include) and negatives (exclude)
-        let positiveTerms: string[] = [];
-        let negativeTerms: string[] = [];
-        filterTerms.forEach(term => {
-            const operator = term.charAt(0); // supported operators => + and -
-            if (operator === "-") {
-                negativeTerms.push(term.slice(1)); // -hello => hello
-            } else if (operator === "+") {
-                positiveTerms.push(term.slice(1)); // +world => world // +-hello => -hello
-            } else {
-                positiveTerms.push(term);
-            }
-        });
-
-        // filter rows
-        const filteredIndexers = this.props.configuredIndexers.filter(indexer => {
-            const text = (indexer.name + " " + indexer.type + " " + indexer.language).toLowerCase();
-            for (let i = 0; i < positiveTerms.length; i++) {
-                if (!text.includes(positiveTerms[i])) {
-                    return false;
-                }
-            }
-            for (let i = 0; i < negativeTerms.length; i++) {
-                if (text.includes(negativeTerms[i])) {
-                    return false;
-                }
-            }
-            return true;
-        });
-        this.setState({tableDataSource: filteredIndexers});
-    }
 
     componentDidUpdate() {
         // TODO: do this logic in other components
@@ -363,12 +319,12 @@ class Indexers extends React.Component<Props, State> {
                         />
                     </Col>
                     <Col span={8} className={styles.headerFilter}>
-                        <Input
-                            placeholder="Search filter"
-                            allowClear
-                            prefix={<SearchOutlined />}
+                        <TableFilter
+                            inputData={this.props.configuredIndexers}
+                            filterColumns={["name", "type", "language"]}
+                            resetTextOnDataChange={false}
+                            onFilter={(outputData) => this.setState({tableDataSource: outputData})}
                             className={styles.headerFilterInput}
-                            onChange={this.onSearchFilterChange}
                         />
                     </Col>
                 </Row>

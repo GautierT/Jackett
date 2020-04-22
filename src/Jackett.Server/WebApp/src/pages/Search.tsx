@@ -4,7 +4,7 @@ import {RouteComponentProps, withRouter} from "react-router";
 import filesize from "filesize";
 import qs from "qs"
 import {Store} from 'rc-field-form/lib/interface.d'
-import {Card, Select, Table, Form, Input, Button, Tag} from 'antd';
+import {Card, Select, Table, Form, Input, Button, Tag, Row, Col} from 'antd';
 import {ColumnsType} from "antd/lib/table/interface";
 import {FormInstance} from "antd/lib/form";
 
@@ -12,15 +12,17 @@ import {RootState} from "../store/reducers";
 import {IndexerConfig} from "../api/indexers";
 import {getSearchResults, SearchResponse, SearchResult} from "../api/search";
 import {jackettTimespan} from "../utils";
+import TableFilter from "../components/TableFilter";
 import MagnetIcon from "../assets/magnet.svg";
 import DownloadIcon from "../assets/download.svg";
 import UploadIcon from "../assets/upload.svg";
 import styles from "./Search.module.css";
 
-// TODO: add props & state
 interface State {
     isLoading: boolean
     searchResponse: SearchResponse
+    searchResults: Array<SearchResult>
+    tableDataSource: any[]
 }
 
 interface Props extends RouteComponentProps {
@@ -42,7 +44,9 @@ class Search extends React.Component<Props, State> {
         super(props);
         this.state = {
             isLoading: false,
-            searchResponse: {} as SearchResponse
+            searchResponse: {} as SearchResponse,
+            searchResults: [],
+            tableDataSource: []
         };
     }
 
@@ -78,7 +82,11 @@ class Search extends React.Component<Props, State> {
         this.setState({ isLoading: true })
         getSearchResults(this.props.apiKey, values.query, values.indexers)
             .then(response => {
-                this.setState({ isLoading: false, searchResponse: response.data })
+                this.setState({
+                    isLoading: false,
+                    searchResponse: response.data,
+                    searchResults: response.data.Results
+                })
             })
             .catch(error => {
                 // TODO: show the error
@@ -276,8 +284,22 @@ class Search extends React.Component<Props, State> {
                         </Form.Item>
                     </Form>
                 </div>
+                <Row className={styles.headerRow}>
+                    <Col span={12}>
+                       Result:
+                    </Col>
+                    <Col span={12} className={styles.headerFilter}>
+                        <TableFilter
+                            inputData={this.state.searchResponse.Results}
+                            filterColumns={["Tracker", "Title", "CategoryDesc"]}
+                            resetTextOnDataChange={true}
+                            onFilter={(outputData) => this.setState({tableDataSource: outputData})}
+                            className={styles.headerFilterInput}
+                        />
+                    </Col>
+                </Row>
                 <Table
-                    dataSource={this.state.searchResponse.Results}
+                    dataSource={this.state.tableDataSource}
                     columns={columns}
                     rowKey="Guid"
                     size="small"

@@ -1,7 +1,7 @@
 import * as React from "react";
 import {ReactNode} from "react";
 import {connect} from "react-redux";
-import {Button, Card, notification, Table, Tag} from "antd";
+import {Button, Card, Col, notification, Row, Table, Tag} from "antd";
 import {ColumnsType} from "antd/lib/table/interface";
 import {
     InfoCircleOutlined, PlusCircleOutlined, SettingOutlined
@@ -13,6 +13,7 @@ import {
     getIndexerConfig,
     IndexerCaps, IndexerConfig, IndexerConfigFields, IndexerType
 } from "../api/indexers";
+import TableFilter from "../components/TableFilter";
 import IndexerConfiguration from "../components/IndexerConfiguration";
 import styles from "./Indexers.module.css";
 import IndexerCapabilities from "../components/IndexerCapabilities";
@@ -28,6 +29,7 @@ interface TableRow {
 }
 
 interface State {
+    preCalcDataSource: Array<TableRow>
     tableDataSource: Array<TableRow>
     modalComponent: ReactNode
     isLoadingModal: boolean
@@ -102,14 +104,16 @@ class IndexersAddIndexer extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
+        const preCalcDataSource = this.computeTableDataSource();
         this.state = {
-            tableDataSource: this.generateTableDataSource(),
+            preCalcDataSource: preCalcDataSource,
+            tableDataSource: preCalcDataSource,
             modalComponent: null,
             isLoadingModal: false
         };
     }
 
-    generateTableDataSource = () => {
+    computeTableDataSource = () => {
         const tableDataSource: Array<TableRow> = this.props.unConfiguredIndexers.map(indexer => {
             const row: TableRow = {
                 id: indexer.id,
@@ -252,7 +256,7 @@ class IndexersAddIndexer extends React.Component<Props, State> {
                 });
                 this.waitingForUpdate = false;
                 this.setState({
-                    tableDataSource: this.generateTableDataSource(),
+                    preCalcDataSource: this.computeTableDataSource(),
                     modalComponent: null
                 });
             }
@@ -262,6 +266,17 @@ class IndexersAddIndexer extends React.Component<Props, State> {
     render() {
         return (
             <Card title="Add indexer" style={{ width: "100%" }}>
+                <Row className={styles.headerRow}>
+                    <Col span={24} className={styles.headerFilter}>
+                        <TableFilter
+                            inputData={this.state.preCalcDataSource}
+                            filterColumns={["name", "type", "language", "mainCats", "description"]}
+                            resetTextOnDataChange={false}
+                            onFilter={(outputData) => this.setState({tableDataSource: outputData})}
+                            className={styles.headerFilterInput}
+                        />
+                    </Col>
+                </Row>
                 <Table
                     dataSource={this.state.tableDataSource}
                     columns={this.tableColumns}
