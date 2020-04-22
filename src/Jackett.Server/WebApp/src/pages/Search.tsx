@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {connect} from "react-redux";
 import {RouteComponentProps, withRouter} from "react-router";
 import filesize from "filesize";
 import qs from "qs"
 import {Store} from 'rc-field-form/lib/interface.d'
-import {Card, Select, Table, Form, Input, Button, Tag, Row, Col} from 'antd';
+import {Card, Select, Table, Form, Input, Button, Tag, Row, Col, Tooltip} from 'antd';
 import {ColumnsType} from "antd/lib/table/interface";
 import {FormInstance} from "antd/lib/form";
 
@@ -249,46 +249,72 @@ class Search extends React.Component<Props, State> {
             return (<Select.Option key={indexer.id} value={indexer.id}>{indexer.name}</Select.Option>)
         })
 
+        const hasResponse = !!this.state.searchResponse.Indexers;
+
+        let result: ReactNode = "";
+        if (hasResponse) {
+            const resultIndexers = this.state.searchResponse.Indexers.map(indexer => {
+                if (indexer.Error) {
+                    return <span key={indexer.ID}>{indexer.Name} (
+                          <Tooltip title={indexer.Error}>
+                              <span><b>Error</b></span>
+                          </Tooltip>) </span>;
+                }
+                return <span key={indexer.ID}>{indexer.Name} ({indexer.Results}) </span>;
+            });
+            result = <div>
+                {this.state.searchResponse.Results.length} results in {
+                this.state.searchResponse.Indexers.length} indexers: {resultIndexers}</div>;
+        }
+
         return (
-            <Card title="Search" style={{ width: "100%" }}>
-                <div>
-                    <Form
-                        layout="inline"
-                        className={styles.formCustom}
-                        onFinish={this.handleSubmit}
-                        ref={this.formRef}
-                    >
-                        <Form.Item label="Query" name="query">
-                            <Input placeholder="search term" style={{ width: '350px' }}/>
-                        </Form.Item>
-                        <Form.Item label="Indexers" name="indexers">
-                            <Select
-                                mode="multiple"
-                                style={{ width: '350px' }}
-                                placeholder="all indexers"
+            <Card className="cardHeader" title={
+                    <Row className={styles.headerRow}>
+                        <Col span={4}>
+                            Search
+                        </Col>
+                        <Col span={20} className={styles.headerFilter}>
+                            <Form
+                                layout="inline"
+                                className={styles.formCustom}
+                                onFinish={this.handleSubmit}
+                                ref={this.formRef}
                             >
-                                {children}
-                            </Select>
-                        </Form.Item>
-                        <Form.Item label="Categories" name="cats">
-                            <Select
-                                mode="multiple"
-                                style={{ width: '350px' }}
-                                placeholder="all categories"
-                            >
-                                {children}
-                            </Select>
-                        </Form.Item>
-                        <Form.Item >
-                            <Button type="primary" htmlType="submit" disabled={this.state.isLoading}>Search</Button>
-                        </Form.Item>
-                    </Form>
-                </div>
-                <Row className={styles.headerRow}>
-                    <Col span={12}>
-                       Result:
+                                <Row className={styles.headerRow}>
+                                    <Col span={6}>
+                                        <Form.Item name="query" className={styles.formCustomInput}>
+                                            <Input placeholder="Search term"/>
+                                        </Form.Item>
+                                    </Col>
+                                    <Col span={6}>
+                                <Form.Item name="indexers" className={styles.formCustomInput}>
+                                    <Select mode="multiple" placeholder="All indexers">
+                                        {children}
+                                    </Select>
+                                </Form.Item>
+                                    </Col>
+                                    <Col span={6}>
+                                <Form.Item name="cats" className={styles.formCustomInput}>
+                                    <Select mode="multiple" placeholder="All categories">
+                                        {children}
+                                    </Select>
+                                </Form.Item>
+                                    </Col>
+                                    <Col span={6}>
+                                <Form.Item >
+                                    <Button type="primary" htmlType="submit" disabled={this.state.isLoading}>Search</Button>
+                                </Form.Item>
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </Col>
+                    </Row>
+                }>
+                <Row className={styles.subHeaderRow}>
+                    <Col span={20}>
+                        {result}
                     </Col>
-                    <Col span={12} className={styles.headerFilter}>
+                    <Col span={4} className={styles.headerFilter}>
                         <TableFilter
                             inputData={this.state.searchResponse.Results}
                             filterColumns={["Tracker", "Title", "CategoryDesc"]}

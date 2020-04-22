@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+.cardHeader {
+    width: 100%;
+}
+
 /* Ant */
 .site-layout .site-layout-background {
     background: #fff;

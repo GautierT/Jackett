@@ -11,9 +11,30 @@
     height: 16px;
 }
 
-.formCustom {
-    margin-bottom: 16px;
+.headerRow{
+    width: 100%;
+    font-size: 16px;
+    line-height: 30px;
+    text-align: left;
 }
+
+.formCustomInput {
+    width: 100%;
+    padding-right: 10px;
+}
+
+.subHeaderRow {
+    margin-bottom: 10px;
+}
+
+.headerFilter {
+    text-align: right;
+}
+
+.headerFilterInput {
+    width: 100%;
+}
+
 
 .tableCustom div[class="ant-table-content"] td {
     padding: 4px !important;

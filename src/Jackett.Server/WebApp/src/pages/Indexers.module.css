@@ -38,12 +38,12 @@
 }
 
 .headerRow {
-    margin-bottom: 10px;
     font-size: 16px;
+    line-height: 30px;
 }
 
 .headerApiKey {
-    text-align: center;
+    text-align: left;
 }
 
 .headerApiKeyInput {

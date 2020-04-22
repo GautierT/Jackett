@@ -11,6 +11,7 @@ import AddIndexer from "../pages/IndexersAddIndexer";
 import Search from "../pages/Search";
 import Configuration from "../pages/Configuration";
 import Security from "../pages/ConfigurationSecurity";
+import SystemStatus from "../pages/SystemStatus";
 
 interface Props {
     serverConfig: ServerConfig
@@ -62,6 +63,7 @@ class AppLayout extends React.Component<Props, {}> {
                                 <Route path="/search" component={Search}/>
                                 <Route path="/configuration" component={Configuration}/>
                                 <Route path="/security" component={Security}/>
+                                <Route path="/status" component={SystemStatus}/>
                                 <Route path="/" component={Indexers}/>
                             </Switch>
                         </Layout.Content>

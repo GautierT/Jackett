@@ -85,7 +85,7 @@ class Configuration extends React.Component<Props, {}> {
 
     render() {
         return (
-            <Card title="General configuration" style={{ width: "100%" }}>
+            <Card className="cardHeader" title="General configuration">
                 <div className={styles.configBody}>
                     <Form
                         labelCol={{ span: 8 }}

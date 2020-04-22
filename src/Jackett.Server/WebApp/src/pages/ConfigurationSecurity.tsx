@@ -95,7 +95,7 @@ class ConfigurationSecurity extends React.Component<Props, State> {
 
     render() {
         return (
-            <Card title="Security configuration" style={{ width: "100%" }}>
+            <Card className="cardHeader" title="Security configuration">
                 <div className={styles.configBody}>
                     <h3 className={styles.configTitle}>Admin password</h3>
                     <Form

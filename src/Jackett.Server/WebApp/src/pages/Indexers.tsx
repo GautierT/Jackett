@@ -280,54 +280,39 @@ class Indexers extends React.Component<Props, State> {
     }
 
     render() {
-        let numPrivate = 0;
-        let numSemiPrivate = 0;
-        let numPublic = 0;
-        this.props.configuredIndexers.forEach(indexer => {
-            switch (indexer.type) {
-                case IndexerType.Private:
-                    numPrivate++;
-                    break;
-                case IndexerType.SemiPrivate:
-                    numSemiPrivate++;
-                    break;
-                default:
-                    numPublic++;
-            }
-        });
 
         return (
-            <Card title="Configured indexers" style={{ width: "100%" }}>
-                <Row className={styles.headerRow}>
-                    <Col span={8}>
-                        {this.props.configuredIndexers.length} indexers configured
-                        ({numPublic} public, {numSemiPrivate} semi-private, {numPrivate} private)
-                    </Col>
-                    <Col span={8} className={styles.headerApiKey}>API key <Input
-                        readOnly
-                        defaultValue={this.props.config.api_key}
-                        className={styles.headerApiKeyInput}
-                        addonAfter={
-                            <CopyToClipboard text={this.props.config.api_key}
-                                             onCopy={() => notification.success({
-                                                 message: "Copied to clipboard!",
-                                                 placement: "bottomRight"
-                                             })}>
-                                <span className={styles.headerApiKeyCopy}><CopyOutlined /></span>
-                            </CopyToClipboard>
-                        }
+            <Card className="cardHeader" title={
+                    <Row className={styles.headerRow}>
+                        <Col span={8}>
+                            Configured indexers
+                        </Col>
+                        <Col span={8} className={styles.headerApiKey}>API key <Input
+                            readOnly
+                            defaultValue={this.props.config.api_key}
+                            className={styles.headerApiKeyInput}
+                            addonAfter={
+                                <CopyToClipboard text={this.props.config.api_key}
+                                                 onCopy={() => notification.success({
+                                                     message: "Copied to clipboard!",
+                                                     placement: "bottomRight"
+                                                 })}>
+                                    <span className={styles.headerApiKeyCopy}><CopyOutlined /></span>
+                                </CopyToClipboard>
+                            }
                         />
-                    </Col>
-                    <Col span={8} className={styles.headerFilter}>
-                        <TableFilter
-                            inputData={this.props.configuredIndexers}
-                            filterColumns={["name", "type", "language"]}
-                            resetTextOnDataChange={false}
-                            onFilter={(outputData) => this.setState({tableDataSource: outputData})}
-                            className={styles.headerFilterInput}
-                        />
-                    </Col>
-                </Row>
+                        </Col>
+                        <Col span={8} className={styles.headerFilter}>
+                            <TableFilter
+                                inputData={this.props.configuredIndexers}
+                                filterColumns={["name", "type", "language"]}
+                                resetTextOnDataChange={false}
+                                onFilter={(outputData) => this.setState({tableDataSource: outputData})}
+                                className={styles.headerFilterInput}
+                            />
+                        </Col>
+                    </Row>
+                }>
                 <Table
                     dataSource={this.state.tableDataSource}
                     columns={this.tableColumns}

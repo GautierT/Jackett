@@ -265,18 +265,22 @@ class IndexersAddIndexer extends React.Component<Props, State> {
 
     render() {
         return (
-            <Card title="Add indexer" style={{ width: "100%" }}>
-                <Row className={styles.headerRow}>
-                    <Col span={24} className={styles.headerFilter}>
-                        <TableFilter
-                            inputData={this.state.preCalcDataSource}
-                            filterColumns={["name", "type", "language", "mainCats", "description"]}
-                            resetTextOnDataChange={false}
-                            onFilter={(outputData) => this.setState({tableDataSource: outputData})}
-                            className={styles.headerFilterInput}
-                        />
-                    </Col>
-                </Row>
+            <Card className="cardHeader" title={
+                    <Row className={styles.headerRow}>
+                        <Col span={12}>
+                            Add indexer
+                        </Col>
+                        <Col span={12} className={styles.headerFilter}>
+                            <TableFilter
+                                inputData={this.state.preCalcDataSource}
+                                filterColumns={["name", "type", "language", "mainCats", "description"]}
+                                resetTextOnDataChange={false}
+                                onFilter={(outputData) => this.setState({tableDataSource: outputData})}
+                                className={styles.headerFilterInput}
+                            />
+                        </Col>
+                    </Row>
+                }>
                 <Table
                     dataSource={this.state.tableDataSource}
                     columns={this.tableColumns}
