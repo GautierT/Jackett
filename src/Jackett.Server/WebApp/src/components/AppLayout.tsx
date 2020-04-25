@@ -14,6 +14,7 @@ import Security from "../pages/ConfigurationSecurity";
 import SystemStatus from "../pages/SystemStatus";
 import SystemLogs from "../pages/SystemLogs";
 import Help from "../pages/Help";
+import HelpReport from "../pages/HelpReport";
 
 interface Props {
     serverConfig: ServerConfig
@@ -68,6 +69,7 @@ class AppLayout extends React.Component<Props, {}> {
                                 <Route path="/status" component={SystemStatus}/>
                                 <Route path="/logs" component={SystemLogs}/>
                                 <Route path="/help" component={Help}/>
+                                <Route path="/report" component={HelpReport}/>
                                 <Route path="/" component={Indexers}/>
                             </Switch>
                         </Layout.Content>

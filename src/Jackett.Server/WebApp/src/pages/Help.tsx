@@ -1,11 +1,11 @@
 import React from 'react';
+import {connect} from "react-redux";
 import {Button, Card, Tag} from 'antd';
 import {CopyOutlined} from "@ant-design/icons";
 
-import styles from "./Help.module.css";
-import {connect} from "react-redux";
 import {ServerConfig} from "../api/configuration";
 import {RootState} from "../store/reducers";
+import styles from "./Help.module.css";
 
 interface Props {
     serverConfig: ServerConfig
