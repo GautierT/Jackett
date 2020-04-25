@@ -1,0 +1,27 @@
+.helpBody {
+    width: 50%;
+    min-width: 600px;
+}
+
+.helpTitle {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.helpButton {
+    margin: 1px 8px;
+    cursor: default;
+}
+
+.helpButton:hover {
+    color: rgba(0, 0, 0, 0.65);
+    border-color: #d9d9d9;
+}
+
+.helpApiKey {
+    margin: 1px 8px;
+    height: 24px;
+    padding: 0px 7px;
+    font-size: 14px;
+    border-radius: 2px;
+    line-height: 22px;
+}
