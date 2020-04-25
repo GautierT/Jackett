@@ -1,20 +1,51 @@
-.configBody {
+.statusBody {
     width: 50%;
     min-width: 600px;
 }
 
-.configTitle {
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.configLabel {
+.statusLabel {
     height: 32px;
     font-size: 14px;
     display: inline-flex;
     line-height: 32px;
 }
 
-.updateButton {
+.statusUpdateButton {
     margin-left: 20px;
     margin-top: 5px;
+}
+
+.logsHeaderRow {
+    font-size: 16px;
+    line-height: 30px;
+}
+
+.logsHeaderFilter {
+    text-align: right;
+}
+
+.logsHeaderFilterInput {
+    width: 300px;
+}
+
+.logsTableCustom div[class="ant-table-content"] td {
+    padding: 3px 10px !important;
+    vertical-align: top;
+}
+
+.logsTableCustom span {
+    font-size: 13px !important;
+}
+
+.logsTableCustom pre {
+    margin-bottom: 0 !important;
+    margin-top: 3px !important;
+    font-size: 13px !important;
+    word-break: normal;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.logsRowError {
+    color: #ff0000;
 }

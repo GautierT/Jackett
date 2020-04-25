@@ -24,7 +24,7 @@ function mapStateToProps(state: RootState) {
     };
 }
 
-class System extends React.Component<Props, State> {
+class SystemStatus extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
@@ -42,7 +42,7 @@ class System extends React.Component<Props, State> {
                     description: "Updater triggered see log for details",
                     placement: "bottomRight"
                 });
-                this.setState({isLoading: false})
+                this.setState({ isLoading: false })
             })
             .catch(error => {
                 notification.error({
@@ -63,17 +63,17 @@ class System extends React.Component<Props, State> {
 
         return (
             <Card className="cardHeader" title="System status">
-                <div className={styles.configBody}>
+                <div className={styles.statusBody}>
                     <Row>
                         <Col span={8} className="ant-form-item-label">
                             <label>Jackett version</label>
 
                         </Col>
                         <Col span={10}>
-                            <label className={styles.configLabel}>
+                            <label className={styles.statusLabel}>
                                 {this.props.config.app_version + " "}
                                 <Button size="small" type="primary" icon={<CloudDownloadOutlined />}
-                                        className={styles.updateButton} onClick={() => this.handleUpdate()}
+                                        className={styles.statusUpdateButton} onClick={() => this.handleUpdate()}
                                         disabled={this.state.isLoading}>
                                     Check for updates
                                 </Button>
@@ -85,7 +85,7 @@ class System extends React.Component<Props, State> {
                             <label>Framework</label>
                         </Col>
                         <Col span={10}>
-                            <label className={styles.configLabel}>
+                            <label className={styles.statusLabel}>
                                 {framework}
                             </label>
                         </Col>
@@ -95,7 +95,7 @@ class System extends React.Component<Props, State> {
                             <label>Indexers</label>
                         </Col>
                         <Col span={10}>
-                            <label className={styles.configLabel}>
+                            <label className={styles.statusLabel}>
                                 {totalIndexers} supported / {this.props.indexers.configuredIndexers.length} configured
                             </label>
                         </Col>
@@ -105,7 +105,7 @@ class System extends React.Component<Props, State> {
                             <label>Using proxy</label>
                         </Col>
                         <Col span={10}>
-                            <label className={styles.configLabel}>
+                            <label className={styles.statusLabel}>
                                 {proxy}
                             </label>
                         </Col>
@@ -116,4 +116,4 @@ class System extends React.Component<Props, State> {
     }
 }
 
-export default connect(mapStateToProps, null)(System);
+export default connect(mapStateToProps, null)(SystemStatus);

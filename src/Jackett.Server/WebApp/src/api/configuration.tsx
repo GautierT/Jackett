@@ -41,6 +41,14 @@ export interface UpdateServerConfig {
     updatedisabled: boolean
 }
 
+export interface LogTrace {
+    Level: string
+    Message: string
+    When: string
+}
+
+export interface LogsResponse extends Array<LogTrace>{}
+
 export function getServerConfig(): Promise<AxiosResponse<ServerConfig>> {
     return http.request<ServerConfig>({
         url: "/api/v2.0/server/config",
@@ -72,5 +80,12 @@ export function postUpdate(): Promise<AxiosResponse<void>> {
     return http.request<void>({
         url: "/api/v2.0/server/update",
         method: "POST"
+    });
+}
+
+export function getLogs(): Promise<AxiosResponse<LogsResponse>> {
+    return http.request<LogsResponse>({
+        url: "/api/v2.0/server/logs",
+        method: "GET"
     });
 }
