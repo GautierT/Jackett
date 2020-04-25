@@ -48,11 +48,13 @@ export interface SearchResponse {
     Indexers: Array<SearchIndexer>
 }
 
-export function getSearchResults(apiKey: string, query?: string, indexers?: Array<string>): Promise<AxiosResponse<SearchResponse>> {
+export function getSearchResults(apiKey: string, query?: string, indexers?: Array<string>, cats?: Array<string>):
+    Promise<AxiosResponse<SearchResponse>> {
     const queryParams = qs.stringify({
         "apikey": apiKey,
         "Query": query || "",
-        "Tracker": indexers
+        "Tracker": indexers,
+        "Category": cats
     }, { arrayFormat: 'brackets' });
 
     return http.request<SearchResponse>({

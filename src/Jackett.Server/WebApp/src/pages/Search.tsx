@@ -23,6 +23,8 @@ interface State {
     isResultsModalVisible: boolean
     isErrorModalVisible: boolean
     errorModalBody: ReactNode
+    indexersOptions: ReactNode[]
+    categoriesOptions: ReactNode[]
     searchResponse: SearchResponse
     searchResults: Array<SearchResult>
     tableDataSource: any[]
@@ -42,6 +44,88 @@ function mapStateToProps(state: RootState) {
 
 class Search extends React.Component<Props, State> {
     formRef = React.createRef<FormInstance>();
+    indexersKeyMap: {[key: string]: string} = {};
+    categoriesKeyMap: {[key: string]: string} = {};
+    tableColumns: ColumnsType<any> = [
+        {
+            title: 'Published',
+            dataIndex: 'PublishDate',
+            width: '1px',
+            defaultSortOrder: 'ascend',
+            sorter: (a:SearchResult, b:SearchResult) => b.PublishDate.localeCompare(a.PublishDate),
+            render: (text:string, record:SearchResult) => <span style={{whiteSpace: "nowrap"}}>{jackettTimespan(record.PublishDate)}</span>
+        },
+        {
+            title: 'Tracker',
+            dataIndex: 'Tracker',
+            width: '1px',
+            sorter: (a:SearchResult, b:SearchResult) => a.Tracker.localeCompare(b.Tracker),
+            render: (text:string, record:SearchResult) => <span style={{whiteSpace: "nowrap"}}>{record.Tracker}</span>
+        },
+        {
+            title: 'DL',
+            dataIndex: 'UploadVolumeFactor',
+            width: '1px',
+            render: (text:string, record:SearchResult) => this.generateDownloadLinks(record)
+        },
+        {
+            title: 'Name',
+            dataIndex: 'Title',
+            width: '100%',
+            sorter: (a:SearchResult, b:SearchResult) => a.Title.localeCompare(b.Title),
+            render: (text:string, record:SearchResult) => this.generateNameWithTags(record)
+        },
+        {
+            title: 'Size',
+            dataIndex: 'Size',
+            width: '1px',
+            sorter: (a:SearchResult, b:SearchResult) => a.Size - b.Size,
+            render: (text:string, record:SearchResult) => <span style={{whiteSpace: "nowrap"}}>{filesize(record.Size)}</span>
+        },
+        {
+            title: 'Files',
+            dataIndex: 'Files',
+            width: '1px',
+            sorter: (a:SearchResult, b:SearchResult) => a.Files - b.Files
+        },
+        {
+            title: 'Category',
+            dataIndex: 'CategoryDesc',
+            width: '1px',
+            sorter: (a:SearchResult, b:SearchResult) => a.CategoryDesc.localeCompare(b.CategoryDesc),
+            render: (text:string, record:SearchResult) => <span style={{whiteSpace: "nowrap"}}>{record.CategoryDesc}</span>
+        },
+        {
+            title: 'Grabs',
+            dataIndex: 'Grabs',
+            width: '1px',
+            sorter: (a:SearchResult, b:SearchResult) => a.Grabs - b.Grabs
+        },
+        {
+            title: 'Seeds',
+            dataIndex: 'Seeders',
+            width: '1px',
+            sorter: (a:SearchResult, b:SearchResult) => a.Seeders - b.Seeders
+        },
+        {
+            title: 'Leechers',
+            dataIndex: 'Peers',
+            width: '1px',
+            sorter: (a:SearchResult, b:SearchResult) => a.Peers - b.Peers
+        },
+        {
+            title: 'DF',
+            dataIndex: 'DownloadVolumeFactor',
+            width: '1px',
+            sorter: (a:SearchResult, b:SearchResult) => a.DownloadVolumeFactor - b.DownloadVolumeFactor
+        },
+        {
+            title: 'UF',
+            dataIndex: 'UploadVolumeFactor',
+            width: '1px',
+            sorter: (a:SearchResult, b:SearchResult) => a.UploadVolumeFactor - b.UploadVolumeFactor
+        }
+    ];
 
     constructor(props: Props) {
         super(props);
@@ -50,43 +134,81 @@ class Search extends React.Component<Props, State> {
             isResultsModalVisible: false,
             isErrorModalVisible: false,
             errorModalBody: "",
+            indexersOptions: [],
+            categoriesOptions:[],
             searchResponse: {} as SearchResponse,
             searchResults: [],
             tableDataSource: []
         };
     }
 
-    componentDidMount() {
-        // get form values from url
-        const searchTerm = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).query;
-        const searchIndexers = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).indexers;
-        const searchCategories = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).cats;
+    encodeKeyValueSelect = (key: string, value:string): string => {return key + "||" + value};
+    decodeKeyValueSelect = (value: string): string => {return value.split("||")[0];}
 
-        // TODO: check the values are in the list before adding
+    loadConfiguredIndexers = () => {
+        // temporary dictionary with reversed key/value to sort by value
+        let tmpDict: {[key: string]: string} = {};
+        this.props.configuredIndexers.forEach(indexer => {
+            tmpDict[indexer.name] = indexer.id;
+        })
+        let indexersKeyMap: {[key: string]: string} = {};
+        let indexersOptions: ReactNode[] = [];
+        Object.keys(tmpDict).sort().forEach(key => {
+            const value = this.encodeKeyValueSelect(tmpDict[key], key);
+            indexersKeyMap[tmpDict[key]] = value;
+            indexersOptions.push(<Select.Option key={value} value={value}>{key}</Select.Option>);
+        })
+        this.indexersKeyMap = indexersKeyMap;
+        this.setState({ indexersOptions: indexersOptions });
+    }
+
+    loadCategories = (selectIndexers: string[]) => {
+        const selectedIndexers = selectIndexers.map((key: string) => this.decodeKeyValueSelect(key));
+        let cats: {[key: string]: string} = {};
+        this.props.configuredIndexers.forEach(indexer => {
+            if (selectedIndexers.length === 0 || selectedIndexers.includes(indexer.id)) {
+                indexer.caps.forEach(cat => {
+                    if (parseInt(cat.ID) < 100000 || selectedIndexers.length === 1)
+                        cats[cat.ID] = cat.Name;
+                });
+            }
+        });
+        let categoriesKeyMap: {[key: string]: string} = {};
+        let categoriesOptions: ReactNode[] = [];
+        Object.keys(cats).sort((a, b) => parseInt(a) - parseInt(b)).forEach(key => {
+            const value = this.encodeKeyValueSelect(key, cats[key]);
+            categoriesKeyMap[key] = value;
+            const label = `(${key}) ${cats[key]}`;
+            categoriesOptions.push(<Select.Option key={value} value={value}>{label}</Select.Option>)
+        })
+        this.categoriesKeyMap = categoriesKeyMap;
+        this.setState({ categoriesOptions: categoriesOptions });
+    }
+
+    onIndexersChange = (values: string[]) => {
+        this.loadCategories(values);
+        // remove categories that have been removed from the list
         const form = this.formRef.current;
         if (form) {
-            // set form values
+            const searchCategories = form.getFieldValue("cats")
+                .filter((cat: string) => this.decodeKeyValueSelect(cat) in this.categoriesKeyMap);
             form.setFieldsValue({
-                query: searchTerm,
-                indexers: searchIndexers,
                 cats: searchCategories
             });
-
-            // perform search
-            if (typeof searchTerm !== 'undefined') {
-                form.submit();
-            }
         }
     }
 
     handleSubmit = (values: Store) => {
         if (this.state.isLoading)
             return;
-
-        // TODO: add categories
-        // perform search
         this.setState({ isLoading: true })
-        getSearchResults(this.props.apiKey, values.query, values.indexers)
+
+        // parse indexers and categories
+        const indexers = values.indexers.map((key: string) => this.decodeKeyValueSelect(key));
+        const cats = values.cats.map((key: string) => this.decodeKeyValueSelect(key));
+
+        // perform search
+        getSearchResults(this.props.apiKey, values.query, indexers, cats)
             .then(response => {
                 this.setState({
                     isLoading: false,
@@ -103,9 +225,10 @@ class Search extends React.Component<Props, State> {
         // change url params
         this.props.history.push({
             search: qs.stringify({
-                query: values.query || "",  // we always add this parameter (it's checked to perform the search when the page reloads)
-                indexers: values.indexers,
-                cats: values.cats
+                // we always add query parameter (it's checked to perform the search when the page reloads)
+                query: values.query || "",
+                indexers: indexers,
+                cats: cats
             }, { arrayFormat: 'brackets' })
         });
     }
@@ -188,93 +311,43 @@ class Search extends React.Component<Props, State> {
         this.setState({isErrorModalVisible: false});
     }
 
-    render() {
-        // TODO: remove df uf?
-        const columns: ColumnsType<any> = [
-            {
-                title: 'Published',
-                dataIndex: 'PublishDate',
-                width: '1px',
-                defaultSortOrder: 'ascend',
-                sorter: (a:SearchResult, b:SearchResult) => b.PublishDate.localeCompare(a.PublishDate),
-                render: (text:string, record:SearchResult) => <span style={{whiteSpace: "nowrap"}}>{jackettTimespan(record.PublishDate)}</span>
-            },
-            {
-                title: 'Tracker',
-                dataIndex: 'Tracker',
-                width: '1px',
-                sorter: (a:SearchResult, b:SearchResult) => a.Tracker.localeCompare(b.Tracker),
-                render: (text:string, record:SearchResult) => <span style={{whiteSpace: "nowrap"}}>{record.Tracker}</span>
-            },
-            {
-                title: 'DL',
-                dataIndex: 'UploadVolumeFactor',
-                width: '1px',
-                render: (text:string, record:SearchResult) => this.generateDownloadLinks(record)
-            },
-            {
-                title: 'Name',
-                dataIndex: 'Title',
-                width: '100%',
-                sorter: (a:SearchResult, b:SearchResult) => a.Title.localeCompare(b.Title),
-                render: (text:string, record:SearchResult) => this.generateNameWithTags(record)
-            },
-            {
-                title: 'Size',
-                dataIndex: 'Size',
-                width: '1px',
-                sorter: (a:SearchResult, b:SearchResult) => a.Size - b.Size,
-                render: (text:string, record:SearchResult) => <span style={{whiteSpace: "nowrap"}}>{filesize(record.Size)}</span>
-            },
-            {
-                title: 'Files',
-                dataIndex: 'Files',
-                width: '1px',
-                sorter: (a:SearchResult, b:SearchResult) => a.Files - b.Files
-            },
-            {
-                title: 'Category',
-                dataIndex: 'CategoryDesc',
-                width: '1px',
-                sorter: (a:SearchResult, b:SearchResult) => a.CategoryDesc.localeCompare(b.CategoryDesc),
-                render: (text:string, record:SearchResult) => <span style={{whiteSpace: "nowrap"}}>{record.CategoryDesc}</span>
-            },
-            {
-                title: 'Grabs',
-                dataIndex: 'Grabs',
-                width: '1px',
-                sorter: (a:SearchResult, b:SearchResult) => a.Grabs - b.Grabs
-            },
-            {
-                title: 'Seeds',
-                dataIndex: 'Seeders',
-                width: '1px',
-                sorter: (a:SearchResult, b:SearchResult) => a.Seeders - b.Seeders
-            },
-            {
-                title: 'Leechers',
-                dataIndex: 'Peers',
-                width: '1px',
-                sorter: (a:SearchResult, b:SearchResult) => a.Peers - b.Peers
-            },
-            {
-                title: 'DF',
-                dataIndex: 'DownloadVolumeFactor',
-                width: '1px',
-                sorter: (a:SearchResult, b:SearchResult) => a.DownloadVolumeFactor - b.DownloadVolumeFactor
-            },
-            {
-                title: 'UF',
-                dataIndex: 'UploadVolumeFactor',
-                width: '1px',
-                sorter: (a:SearchResult, b:SearchResult) => a.UploadVolumeFactor - b.UploadVolumeFactor
-            }
-        ];
+    componentDidMount() {
+        // get form values from url
+        const searchTerm = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).query;
 
-        // TODO: dont keep state, check indexer addition
-        const children = this.props.configuredIndexers.map(indexer => {
-            return (<Select.Option key={indexer.id} value={indexer.id}>{indexer.name}</Select.Option>)
-        })
+        // indexers: remove the values not in the list and convert to key||value format
+        let searchIndexers = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).indexers || [];
+        this.loadConfiguredIndexers();
+        searchIndexers = searchIndexers
+            .filter((indexer: string) => indexer in this.indexersKeyMap)
+            .map((indexer: string) => this.indexersKeyMap[indexer]);
+
+        // categories: remove the values not in the list and convert to key||value format
+        let searchCategories = qs.parse(this.props.location.search, { ignoreQueryPrefix: true }).cats || [];
+        this.loadCategories(searchIndexers);
+        searchCategories = searchCategories
+            .filter((cat: string) => cat in this.categoriesKeyMap)
+            .map((cat: string) => this.categoriesKeyMap[cat]);
+
+        const form = this.formRef.current;
+        if (form) {
+            // set form values
+            form.setFieldsValue({
+                query: searchTerm,
+                indexers: searchIndexers,
+                cats: searchCategories
+            });
+
+            // perform search
+            if (typeof searchTerm !== 'undefined') {
+                form.submit();
+            }
+        }
+    }
+
+    render() {
+        // TODO: fix grabs sorting (maybe more fields)
+
 
         const hasResponse = !!this.state.searchResponse.Indexers;
 
@@ -302,7 +375,7 @@ class Search extends React.Component<Props, State> {
             const subHeaderError = subHeaderErrors.length > 0 ? <span> &nbsp;&nbsp;&nbsp; Errors {subHeaderErrors}</span> : "";
 
             subHeaderResult = <div>
-                Found <Button type="link"  className={styles.subHeaderLink} onClick={() => this.handleShowResultsModal()}>
+                Found<Button type="link"  className={styles.subHeaderLink} onClick={() => this.handleShowResultsModal()}>
                 {this.state.searchResponse.Results.length} results in {
                     this.state.searchResponse.Indexers.length} indexers</Button>
                 {subHeaderError}
@@ -332,15 +405,16 @@ class Search extends React.Component<Props, State> {
                                     </Col>
                                     <Col span={6}>
                                 <Form.Item name="indexers" className={styles.formCustomInput}>
-                                    <Select mode="multiple" placeholder="All indexers">
-                                        {children}
+                                    <Select mode="multiple" placeholder="All indexers"
+                                            onChange={(values: string[]) => this.onIndexersChange(values)}>
+                                        {this.state.indexersOptions}
                                     </Select>
                                 </Form.Item>
                                     </Col>
                                     <Col span={6}>
                                 <Form.Item name="cats" className={styles.formCustomInput}>
                                     <Select mode="multiple" placeholder="All categories">
-                                        {children}
+                                        {this.state.categoriesOptions}
                                     </Select>
                                 </Form.Item>
                                     </Col>
@@ -370,7 +444,7 @@ class Search extends React.Component<Props, State> {
                 </Row>
                 <Table
                     dataSource={this.state.tableDataSource}
-                    columns={columns}
+                    columns={this.tableColumns}
                     rowKey="Guid"
                     size="small"
                     className={styles.tableCustom}
