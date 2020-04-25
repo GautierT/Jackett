@@ -57,6 +57,12 @@ const mapDispatchToProps = {
 class Indexers extends React.Component<Props, State> {
     tableColumns: ColumnsType<any> = [
         {
+            title: 'Actions',
+            dataIndex: 'id',
+            width: '1px',
+            render: (text:string, record:IndexerConfig) => this.renderColumnActions(record)
+        },
+        {
             title: 'Indexer',
             dataIndex: 'name',
             width: '1px',
@@ -81,14 +87,15 @@ class Indexers extends React.Component<Props, State> {
             sorter: (a:IndexerConfig, b:IndexerConfig) => b.language.localeCompare(a.language)
         },
         {
-            title: 'Actions',
-            dataIndex: 'id',
-            width: '1px',
-            render: (text:string, record:IndexerConfig) => this.renderColumnActions(record)
+            title: 'Description',
+            dataIndex: 'description',
+            className: styles.largeText,
+            render: (text:string, record:IndexerConfig) => <span title={record.description}>{record.description}</span>
         },
         {
             title: 'Feeds',
             dataIndex: 'id',
+            width: '1px',
             render: (text:string, record:IndexerConfig) => this.renderColumnFeeds(record)
         }
     ];
@@ -119,13 +126,13 @@ class Indexers extends React.Component<Props, State> {
     // TODO: create a component or actions
     renderColumnActions = (record: IndexerConfig): ReactNode => {
         const searchButton = <Button title="Search" icon={<SearchOutlined />} size="small"
-                                     onClick={() => this.actionSearch(record.id)}>Search</Button>;
+                                     onClick={() => this.actionSearch(record.id)}></Button>;
         const capabilitiesButton = <Button title="Indexer capabilities" icon={<InfoCircleOutlined />} size="small"
-                                           onClick={() => this.actionIndexerCapabilities(record.id)}>Caps</Button>;
-        const configureButton = <Button title="Configure indexer" icon={<SettingOutlined />} size="small" className={styles.actionButtonBlue}
-                                        onClick={() => this.actionConfigureIndexer(record.id)}>Config</Button>;
-        const deleteButton = <Button title="Delete indexer" icon={<DeleteOutlined />} size="small" className={styles.actionButtonRed}
-                                     onClick={() => this.actionDeleteIndexer(record.id)}>Delete</Button>;
+                                           onClick={() => this.actionIndexerCapabilities(record.id)}></Button>;
+        const configureButton = <Button title="Configure indexer" icon={<SettingOutlined />} size="small"
+                                        onClick={() => this.actionConfigureIndexer(record.id)}></Button>;
+        const deleteButton = <Button title="Delete indexer" icon={<DeleteOutlined />} size="small"
+                                     onClick={() => this.actionDeleteIndexer(record.id)}></Button>;
         return (
             <div className={styles.actions}>{searchButton} {capabilitiesButton} {configureButton} {deleteButton}</div>
         );
@@ -154,15 +161,15 @@ class Indexers extends React.Component<Props, State> {
 
         switch (type) {
             case FeedType.RSS:
-                message = "Copy RSS Feed";
+                message = "RSS Feed";
                 url = resolveAbsoluteUrl(basePath + "/api/v2.0/indexers/" + id + "/results/torznab/api?apikey=" + apiKey + "&t=search&cat=&q=");
                 break;
             case FeedType.Torznab:
-                message = "Copy Torznab Feed";
+                message = "Torznab Feed";
                 url = resolveAbsoluteUrl(basePath + "/api/v2.0/indexers/" + id + "/results/torznab/");
                 break;
             case FeedType.Potato:
-                message = "Copy Potato Feed";
+                message = "Potato Feed";
                 url = resolveAbsoluteUrl(basePath + "/api/v2.0/indexers/" + id + "/results/potato/");
                 break;
             default:
@@ -305,7 +312,7 @@ class Indexers extends React.Component<Props, State> {
                         <Col span={8} className={styles.headerFilter}>
                             <TableFilter
                                 inputData={this.props.configuredIndexers}
-                                filterColumns={["name", "type", "language"]}
+                                filterColumns={["name", "type", "language", "description"]}
                                 resetTextOnDataChange={false}
                                 onFilter={(outputData) => this.setState({tableDataSource: outputData})}
                                 className={styles.headerFilterInput}
@@ -319,11 +326,12 @@ class Indexers extends React.Component<Props, State> {
                     rowKey="id"
                     size="small"
                     className={styles.tableCustom}
+                    bordered
                     pagination={{
                         position:["bottomLeft"],
                         showSizeChanger: true,
-                        defaultPageSize: 15,
-                        pageSizeOptions: ["15", "30", "50", "100", "1000"]
+                        defaultPageSize: 20,
+                        pageSizeOptions: ["10", "20", "50", "100", "1000"]
                     }}
                     showSorterTooltip={false}
                     loading={this.props.isUpdating || this.state.isLoadingModal}

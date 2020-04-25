@@ -57,6 +57,12 @@ const mapDispatchToProps = {
 class IndexersAddIndexer extends React.Component<Props, State> {
     tableColumns: ColumnsType<any> = [
         {
+            title: 'Actions',
+            dataIndex: 'id',
+            width: '1px',
+            render: (text:string, record:TableRow) => this.renderColumnActions(record)
+        },
+        {
             title: 'Indexer',
             dataIndex: 'name',
             width: '1px',
@@ -81,10 +87,10 @@ class IndexersAddIndexer extends React.Component<Props, State> {
             sorter: (a:TableRow, b:TableRow) => b.language.localeCompare(a.language)
         },
         {
-            title: 'Actions',
-            dataIndex: 'id',
-            width: '1px',
-            render: (text:string, record:TableRow) => this.renderColumnActions(record)
+            title: 'Description',
+            dataIndex: 'description',
+            className: styles.largeText,
+            render: (text:string, record:TableRow) => <span title={record.description}>{record.description}</span>
         },
         {
             title: 'Categories',
@@ -92,12 +98,6 @@ class IndexersAddIndexer extends React.Component<Props, State> {
             width: '1px',
             sorter: (a:TableRow, b:TableRow) => b.mainCats.localeCompare(a.mainCats),
             render: (text:string, record:TableRow) => <span style={{whiteSpace: "nowrap"}}>{record.mainCats}</span>
-        },
-        {
-            title: 'Description',
-            dataIndex: 'description',
-            className: styles.largeText,
-            render: (text:string, record:TableRow) => <span title={record.description}>{record.description}</span>
         }
     ];
     waitingForUpdate = false;
@@ -153,12 +153,12 @@ class IndexersAddIndexer extends React.Component<Props, State> {
 
     renderColumnActions = (record:TableRow): ReactNode => {
         const capabilitiesButton = <Button title="Indexer capabilities" icon={<InfoCircleOutlined />} size="small"
-                                     onClick={() => this.actionIndexerCapabilities(record.id)}>Caps</Button>;
-        const configureButton = <Button title="Configure indexer" icon={<SettingOutlined />} size="small" className={styles.actionButtonBlue}
-                                        onClick={() => this.actionConfigureIndexer(record.id)}>Config</Button>;
+                                     onClick={() => this.actionIndexerCapabilities(record.id)}></Button>;
+        const configureButton = <Button title="Configure indexer" icon={<SettingOutlined />} size="small"
+                                        onClick={() => this.actionConfigureIndexer(record.id)}></Button>;
         const addButton = record.type === IndexerType.Public ?
-            <Button title="Add indexer" icon={<PlusCircleOutlined />} size="small" className={styles.actionButtonGreen}
-                    onClick={() => this.actionAddIndexer(record.id)}>Add</Button> : "";
+            <Button title="Add indexer" icon={<PlusCircleOutlined />} size="small"
+                    onClick={() => this.actionAddIndexer(record.id)}></Button> : "";
         return (
             <div className={styles.actions}>{capabilitiesButton} {configureButton} {addButton}</div>
         );
@@ -287,11 +287,12 @@ class IndexersAddIndexer extends React.Component<Props, State> {
                     rowKey="id"
                     size="small"
                     className={styles.tableCustom}
+                    bordered
                     pagination={{
                         position:["bottomLeft"],
                         showSizeChanger: true,
-                        defaultPageSize: 15,
-                        pageSizeOptions: ["15", "30", "50", "100", "1000"]
+                        defaultPageSize: 20,
+                        pageSizeOptions: ["10", "20", "50", "100", "1000"]
                     }}
                     showSorterTooltip={false}
                     loading={this.props.isUpdating || this.state.isLoadingModal}
