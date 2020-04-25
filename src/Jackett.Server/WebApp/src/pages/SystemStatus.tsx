@@ -64,7 +64,7 @@ class SystemStatus extends React.Component<Props, State> {
         return (
             <Card className="cardHeader" title="System status">
                 <div className={styles.statusBody}>
-                    <Row>
+                    <Row className={styles.statusRow}>
                         <Col span={8} className="ant-form-item-label">
                             <label>Jackett version</label>
 
@@ -80,7 +80,7 @@ class SystemStatus extends React.Component<Props, State> {
                             </label>
                         </Col>
                     </Row>
-                    <Row>
+                    <Row className={styles.statusRow}>
                         <Col span={8} className="ant-form-item-label">
                             <label>Framework</label>
                         </Col>
@@ -90,7 +90,7 @@ class SystemStatus extends React.Component<Props, State> {
                             </label>
                         </Col>
                     </Row>
-                    <Row>
+                    <Row className={styles.statusRow}>
                         <Col span={8} className="ant-form-item-label">
                             <label>Indexers</label>
                         </Col>
@@ -100,7 +100,7 @@ class SystemStatus extends React.Component<Props, State> {
                             </label>
                         </Col>
                     </Row>
-                    <Row>
+                    <Row className={styles.statusRow}>
                         <Col span={8} className="ant-form-item-label">
                             <label>Using proxy</label>
                         </Col>

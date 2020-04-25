@@ -1,18 +1,10 @@
 import React from 'react';
-import {connect} from "react-redux";
 import {Card, Col, notification, Row, Table} from 'antd';
 import {ColumnsType} from "antd/lib/table/interface";
 
-import {RootState} from "../store/reducers";
-import {getLogs, LogsResponse, LogTrace, ServerConfig} from "../api/configuration";
-import {IndexersConfigState} from "../store/types/indexersConfig";
+import {getLogs, LogsResponse, LogTrace} from "../api/configuration";
 import TableFilter from "../components/TableFilter";
 import styles from "./System.module.css";
-
-interface Props {
-    config: ServerConfig
-    indexers: IndexersConfigState
-}
 
 interface State {
     isLoading: boolean
@@ -20,14 +12,7 @@ interface State {
     tableDataSource: LogsResponse
 }
 
-function mapStateToProps(state: RootState) {
-    return {
-        config: state.config.config,
-        indexers: state.indexers,
-    };
-}
-
-class SystemLogs extends React.Component<Props, State> {
+class SystemLogs extends React.Component<{}, State> {
     tableColumns: ColumnsType<any> = [
         {
             title: 'Date',
@@ -51,7 +36,7 @@ class SystemLogs extends React.Component<Props, State> {
         }
     ];
 
-    constructor(props: Props) {
+    constructor(props: any) {
         super(props);
         this.state = {
             isLoading: false,
@@ -123,4 +108,4 @@ class SystemLogs extends React.Component<Props, State> {
     }
 }
 
-export default connect(mapStateToProps, null)(SystemLogs);
+export default SystemLogs;
