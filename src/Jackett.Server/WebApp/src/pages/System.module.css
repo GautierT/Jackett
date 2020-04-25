@@ -1,0 +1,20 @@
+.configBody {
+    width: 50%;
+    min-width: 600px;
+}
+
+.configTitle {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.configLabel {
+    height: 32px;
+    font-size: 14px;
+    display: inline-flex;
+    line-height: 32px;
+}
+
+.updateButton {
+    margin-left: 20px;
+    margin-top: 5px;
+}

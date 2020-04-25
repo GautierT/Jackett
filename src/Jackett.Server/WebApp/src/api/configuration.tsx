@@ -67,3 +67,10 @@ export function postAdminPassword(adminPassword: string): Promise<AxiosResponse<
         }
     });
 }
+
+export function postUpdate(): Promise<AxiosResponse<void>> {
+    return http.request<void>({
+        url: "/api/v2.0/server/update",
+        method: "POST"
+    });
+}

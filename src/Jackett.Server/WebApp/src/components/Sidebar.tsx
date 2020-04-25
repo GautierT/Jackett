@@ -3,7 +3,7 @@ import {Link, withRouter} from 'react-router-dom';
 import {RouteComponentProps} from "react-router";
 import {Layout, Menu} from 'antd';
 import {
-    CloudDownloadOutlined, DesktopOutlined, FileAddOutlined, FileSearchOutlined, FileTextOutlined, GithubOutlined,
+    DesktopOutlined, FileAddOutlined, FileSearchOutlined, FileTextOutlined, GithubOutlined,
     QuestionCircleOutlined, SafetyCertificateOutlined, SearchOutlined, SettingOutlined, StarOutlined
 } from "@ant-design/icons";
 
@@ -107,11 +107,6 @@ class Sidebar extends React.Component<Props, State> {
                     label: "Logs",
                     icon: <FileTextOutlined />,
                     path: "/logs"
-                },
-                {
-                    label: "Updates",
-                    icon: <CloudDownloadOutlined />,
-                    path: "/updates"
                 }
             ]
         },

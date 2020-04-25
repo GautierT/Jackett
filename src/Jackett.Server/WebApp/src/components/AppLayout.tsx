@@ -11,7 +11,7 @@ import AddIndexer from "../pages/IndexersAddIndexer";
 import Search from "../pages/Search";
 import Configuration from "../pages/Configuration";
 import Security from "../pages/ConfigurationSecurity";
-import SystemStatus from "../pages/SystemStatus";
+import SystemStatus from "../pages/System";
 
 interface Props {
     serverConfig: ServerConfig
