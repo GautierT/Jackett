@@ -4,7 +4,7 @@ import {RouteComponentProps, withRouter} from "react-router";
 import filesize from "filesize";
 import qs from "qs"
 import {Store} from 'rc-field-form/lib/interface.d'
-import {Card, Select, Table, Form, Input, Button, Tag, Row, Col, Tooltip} from 'antd';
+import {Card, Select, Table, Form, Input, Button, Tag, Row, Col, Modal} from 'antd';
 import {ColumnsType} from "antd/lib/table/interface";
 import {FormInstance} from "antd/lib/form";
 
@@ -20,6 +20,9 @@ import styles from "./Search.module.css";
 
 interface State {
     isLoading: boolean
+    isResultsModalVisible: boolean
+    isErrorModalVisible: boolean
+    errorModalBody: ReactNode
     searchResponse: SearchResponse
     searchResults: Array<SearchResult>
     tableDataSource: any[]
@@ -44,6 +47,9 @@ class Search extends React.Component<Props, State> {
         super(props);
         this.state = {
             isLoading: false,
+            isResultsModalVisible: false,
+            isErrorModalVisible: false,
+            errorModalBody: "",
             searchResponse: {} as SearchResponse,
             searchResults: [],
             tableDataSource: []
@@ -161,6 +167,27 @@ class Search extends React.Component<Props, State> {
         )
     }
 
+    handleShowResultsModal = () => {
+        this.setState({isResultsModalVisible: true});
+    }
+
+    handleOnCloseResultsModal = () => {
+        this.setState({isResultsModalVisible: false});
+    }
+
+    handleShowErrorModal = (id: string) => {
+        const indexerResponse = this.state.searchResponse.Indexers.filter(indexer => indexer.ID === id)[0];
+
+        this.setState({
+            isErrorModalVisible: true,
+            errorModalBody: <span>{indexerResponse.Name}<br/>{indexerResponse.Error}</span>
+        });
+    }
+
+    handleOnCloseErrorModal = () => {
+        this.setState({isErrorModalVisible: false});
+    }
+
     render() {
         // TODO: remove df uf?
         const columns: ColumnsType<any> = [
@@ -251,21 +278,38 @@ class Search extends React.Component<Props, State> {
 
         const hasResponse = !!this.state.searchResponse.Indexers;
 
-        let result: ReactNode = "";
+        // TODO: type
+        let resultIndexersTable: object[] = [];
+        let subHeaderStyle: object = {display: "none"};
+        let subHeaderResult: ReactNode = "";
         if (hasResponse) {
-            const resultIndexers = this.state.searchResponse.Indexers.map(indexer => {
+            let subHeaderErrors: ReactNode[] = [];
+            this.state.searchResponse.Indexers.forEach(indexer => {
+                resultIndexersTable.push({
+                    id: indexer.ID,
+                    name: indexer.Name,
+                    results: indexer.Error ? 100000: indexer.Results,
+                    message: indexer.Error ? <b>Error</b> : `${indexer.Results} results`
+                });
+
                 if (indexer.Error) {
-                    return <span key={indexer.ID}>{indexer.Name} (
-                          <Tooltip title={indexer.Error}>
-                              <span><b>Error</b></span>
-                          </Tooltip>) </span>;
+                    subHeaderErrors.push(
+                        <Button key={indexer.ID} size="small" type="link" danger className={styles.subHeaderLink}
+                                onClick={() => this.handleShowErrorModal(indexer.ID)}>{indexer.Name}</Button>
+                    );
                 }
-                return <span key={indexer.ID}>{indexer.Name} ({indexer.Results}) </span>;
             });
-            result = <div>
+            const subHeaderError = subHeaderErrors.length > 0 ? <span> &nbsp;&nbsp;&nbsp; Errors {subHeaderErrors}</span> : "";
+
+            subHeaderResult = <div>
+                Found <Button type="link"  className={styles.subHeaderLink} onClick={() => this.handleShowResultsModal()}>
                 {this.state.searchResponse.Results.length} results in {
-                this.state.searchResponse.Indexers.length} indexers: {resultIndexers}</div>;
+                    this.state.searchResponse.Indexers.length} indexers</Button>
+                {subHeaderError}
+            </div>;
+            subHeaderStyle = {};
         }
+
 
         return (
             <Card className="cardHeader" title={
@@ -310,17 +354,17 @@ class Search extends React.Component<Props, State> {
                         </Col>
                     </Row>
                 }>
-                <Row className={styles.subHeaderRow}>
+                <Row className={styles.subHeaderRow} style={subHeaderStyle}>
                     <Col span={20}>
-                        {result}
+                        {subHeaderResult}
                     </Col>
-                    <Col span={4} className={styles.headerFilter}>
+                    <Col span={4} className={styles.subHeaderFilter}>
                         <TableFilter
                             inputData={this.state.searchResponse.Results}
                             filterColumns={["Tracker", "Title", "CategoryDesc"]}
                             resetTextOnDataChange={true}
                             onFilter={(outputData) => this.setState({tableDataSource: outputData})}
-                            className={styles.headerFilterInput}
+                            className={styles.subHeaderFilterInput}
                         />
                     </Col>
                 </Row>
@@ -330,15 +374,61 @@ class Search extends React.Component<Props, State> {
                     rowKey="Guid"
                     size="small"
                     className={styles.tableCustom}
+                    bordered
                     pagination={{
                         position:["bottomLeft"],
                         showSizeChanger: true,
-                        defaultPageSize: 15,
-                        pageSizeOptions: ["15", "30", "50", "100", "1000"]
+                        defaultPageSize: 20,
+                        pageSizeOptions: ["10", "20", "50", "100", "1000"]
                     }}
                     showSorterTooltip={false}
                     loading={this.state.isLoading}
                 />
+                <Modal
+                    visible={this.state.isResultsModalVisible}
+                    centered
+                    title={"Search results"}
+                    onOk={this.handleOnCloseResultsModal}
+                    onCancel={this.handleOnCloseResultsModal}
+                >
+                    <Table
+                        dataSource={resultIndexersTable}
+                        size="small"
+                        rowKey="id"
+                        className={styles.resultsModalCustom}
+                        bordered
+                        pagination={{
+                            position:["bottomLeft"],
+                            showSizeChanger: true,
+                            defaultPageSize: 20,
+                            pageSizeOptions: ["10", "20", "50", "100", "1000"]
+                        }}
+                        showSorterTooltip={false}
+                    >
+                        <Table.Column
+                            title="Name"
+                            dataIndex="name"
+                            sorter={(a:any, b:any) => b.name.localeCompare(a.name)}
+                        />
+                        <Table.Column
+                            title="Results"
+                            dataIndex="results"
+                            defaultSortOrder="descend"
+                            sorter={(a:any, b:any) => a.results - b.results}
+                            render={(text:string, record:any) => <span>{record.message}</span>}
+                        />
+                    </Table>
+                </Modal>
+                <Modal
+                    visible={this.state.isErrorModalVisible}
+                    centered
+                    title={"Indexer error"}
+                    width={"60%"}
+                    onOk={this.handleOnCloseErrorModal}
+                    onCancel={this.handleOnCloseErrorModal}
+                >
+                    {this.state.errorModalBody}
+                </Modal>
             </Card>
         );
     }
