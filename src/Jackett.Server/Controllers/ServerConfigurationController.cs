@@ -104,6 +104,13 @@ namespace Jackett.Server.Controllers
             Helper.SetLogLevel(logging ? LogLevel.Debug : LogLevel.Info);
             serverConfig.RuntimeSettings.TracingEnabled = logging;
 
+            if (config.flaresolverrurl != serverConfig.FlareSolverrUrl)
+            {
+                serverConfig.FlareSolverrUrl = config.flaresolverrurl;
+                configService.SaveConfig(serverConfig);
+                webHostRestartNeeded = true;
+            }
+
             if (omdbApiKey != serverConfig.OmdbApiKey || omdbApiUrl != serverConfig.OmdbApiUrl)
             {
                 serverConfig.OmdbApiKey = omdbApiKey;

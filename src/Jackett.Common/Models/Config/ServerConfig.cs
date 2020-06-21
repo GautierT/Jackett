@@ -26,11 +26,12 @@ namespace Jackett.Common.Models.Config
         public bool UpdateDisabled { get; set; }
         public bool UpdatePrerelease { get; set; }
         public string BasePathOverride { get; set; }
+        public string FlareSolverrUrl { get; set; }
         public string OmdbApiKey { get; set; }
         public string OmdbApiUrl { get; set; }
 
         /// <summary>
-        /// Ignore as we don't really want to be saving settings specified in the command line. 
+        /// Ignore as we don't really want to be saving settings specified in the command line.
         /// This is a bit of a hack, but in future it might not be all that bad to be able to override config values using settings that were provided at runtime. (and save them if required)
         /// </summary>
         [JsonIgnore]

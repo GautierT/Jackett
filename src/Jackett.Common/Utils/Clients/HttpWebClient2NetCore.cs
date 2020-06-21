@@ -8,7 +8,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using CloudflareSolverRe;
+using FlareSolverrSharp;
 using com.LandonKey.SocksWebProxy;
 using com.LandonKey.SocksWebProxy.Proxy;
 using Jackett.Common.Helpers;
@@ -114,9 +114,10 @@ namespace Jackett.Common.Utils.Clients
 
         public void CreateClient()
         {
-            clearanceHandlr = new ClearanceHandler(BrowserUtil.ChromeUserAgent)
+            clearanceHandlr = new ClearanceHandler(serverConfig.FlareSolverrUrl)
             {
-                MaxTries = 10
+                UserAgent = BrowserUtil.ChromeUserAgent,
+                MaxTimeout = 50000
             };
             clientHandlr = new HttpClientHandler
             {
